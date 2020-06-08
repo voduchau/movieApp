@@ -9,6 +9,10 @@ const styles = StyleSheet.create({
 	drawerList: {
 
 	},
+	avatarUser:{
+		width: 50,
+		height: 50
+	},
 	drawerListIcon: {
 		width: 27
 	},
