@@ -25,7 +25,7 @@
     "react-native": "^0.44.3",
     "react-native-button": "^3.0.1",
     "react-native-config": "^0.3.1",
-    "react-native-elements": "^2.0.2",
+    "react-native-elements": "1.0.0",
     "react-native-linear-gradient": "^2.0.0",
     "react-native-navigation": "1.1.84",
     "react-native-scrollable-tab-view": "^0.7.4",

@@ -4,7 +4,8 @@ import {
 	View,
 	TouchableOpacity,
 	ToastAndroid,
-	ImageBackground
+	ImageBackground,
+	Image
 } from 'react-native';
 // import { Avatar } from 'react-native-elements';
 import Icon from 'react-native-vector-icons/Ionicons';
@@ -41,9 +42,8 @@ class Drawer extends Component {
 	componentDidMount = () => {
 		firebase.auth().onAuthStateChanged( (user) => {
 			if (user) {
-			  this.setState({ isLogin: true})
 			firebase.database().ref('users/' + user.uid).once('value').then( (snapshot) => {
-				  console.log(snapshot.val().avatar,'111111111111')
+				this.setState({ isLogin: true})
 				this.setState({ avatarUser: snapshot.val().avatar})
 			  })
 			} else {
@@ -95,6 +95,20 @@ class Drawer extends Component {
 		)
 		
 	}
+	_renderAvatar = () => {
+		if(this.state.isLogin){
+			var user = firebase.auth().currentUser;
+			//  firebase.database().ref('users/' + user.uid).once('value').then( (snapshot) => {
+			// 		  console.log(snapshot.val().avatar,'111111111111')
+			// 		this.setState({ avatarUser: snapshot.val().avatar})
+			// 	  })
+			console.log(user,'usersss')
+		}
+		return this.state.isLogin ? 
+			<View style={styles.avatarUser}>
+				<Image source={{uri : this.state.avatarUser}} style={{height: 100, width:100, borderRadius:50, backgroundColor: 'black'}} />
+			</View> : null
+	}
 	_goToLogout = async () => {
 		this.setState({ isLogin: false})
 		await firebase.auth().signOut();
@@ -108,13 +122,7 @@ class Drawer extends Component {
 		return (
 			<LinearGradient colors={['rgba(0, 0, 0, 0.7)', 'rgba(0,0,0, 0.9)', 'rgba(0,0,0, 1)']} style={styles.linearGradient}>
 				<View style={styles.container}>
-					{/* <Avatar
-					  rounded
-					  source={{
-					    uri:
-					      'https://s3.amazonaws.com/uifaces/faces/twitter/ladylexy/128.jpg',
-					  }}
-					/> */}
+				{this._renderAvatar()}
 					<View style={styles.drawerList}>
 						<TouchableOpacity onPress={this._openSearch}>
 							<View style={styles.drawerListItem}>

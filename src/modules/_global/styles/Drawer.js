@@ -10,11 +10,21 @@ const styles = StyleSheet.create({
 
 	},
 	avatarUser:{
-		width: 50,
-		height: 50
+		marginBottom: 30,
+		marginLeft: 30
 	},
 	drawerListIcon: {
 		width: 27
+	},
+	tinyLogo: {
+		width: 70,
+		height: 70,
+		borderWidth: 3,
+		borderColor: 'red'
+	},
+	logo: {
+		width: 66,
+		height: 58,
 	},
 	drawerListItem: {
 		flexDirection: 'row',

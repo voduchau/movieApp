@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { StyleSheet, Text, TextInput, View, Alert } from "react-native";
+import { StyleSheet, Text, TextInput, View, Alert, Image } from "react-native";
 import Button from "react-native-button";
 import ProgressBar from '../_global/ProgressBar';
 // import styles from './styles/Movie';
@@ -36,7 +36,6 @@ class Login extends Component {
     firebase.auth().onAuthStateChanged((user) => {
       if (user) {
         // User is signed in.
-        
         this.props.navigator.popToRoot({
           screen: 'movieapp.Movies'
         });
@@ -149,6 +148,16 @@ const styles = StyleSheet.create({
     textAlign: "left",
     marginLeft: 20
   },
+  tinyLogo: {
+		width: 70,
+		height: 70,
+		borderWidth: 3,
+		borderColor: 'red'
+	},
+	logo: {
+		width: 66,
+		height: 58,
+	},
   content: {
     paddingLeft: 50,
     paddingRight: 50,
