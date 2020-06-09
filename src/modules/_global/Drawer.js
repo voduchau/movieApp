@@ -9,6 +9,7 @@ import {
 } from 'react-native';
 // import { Avatar } from 'react-native-elements';
 import Icon from 'react-native-vector-icons/Ionicons';
+import IconLogin from 'react-native-vector-icons/SimpleLineIcons';
 import LinearGradient from 'react-native-linear-gradient';
 import firebaseConfig from '../_global/firebase/firebaseApp';
 import styles from './styles/Drawer';
@@ -19,11 +20,14 @@ import firebase from 'firebase';
 if (!firebase.apps.length) {
 	firebase.initializeApp(firebaseConfig)
   }
+  const defaultAvatar = 'https://i2.wp.com/www.winhelponline.com/blog/wp-content/uploads/2017/12/user.png?fit=256%2C256&quality=100&ssl=1'
 class Drawer extends Component {
 	constructor(props) {
 		super(props);
 		this.state = {
 			isLogin: false,
+			userID: '',
+			fullname: '',
 			avatarUser: ""
 		}
 		this._goToMovies = this._goToMovies.bind(this);
@@ -36,16 +40,18 @@ class Drawer extends Component {
 		this._toggleDrawer();
 		this.props.navigator.showModal({
 			screen: 'movieapp.Search',
-			title: 'Search'
+			title: 'Search Movie'
 		});
 	}
 	componentDidMount = () => {
-		firebase.auth().onAuthStateChanged( (user) => {
+		firebase.auth().onAuthStateChanged( async (user) => {
 			if (user) {
-			firebase.database().ref('users/' + user.uid).once('value').then( (snapshot) => {
-				this.setState({ isLogin: true})
-				this.setState({ avatarUser: snapshot.val().avatar})
-			  })
+				await firebase.database().ref('users/' + user.uid).once('value').then( (snapshot) => {
+					this.setState({ avatarUser: snapshot.val().avatar})
+					this.setState({ fullname: snapshot.val().fullname})
+			  	})
+
+			  	this.setState({ isLogin: true})
 			} else {
 			}
 		  });
@@ -73,12 +79,12 @@ class Drawer extends Component {
 		});
 	}
 
-	_renderLogin = (iconLogin) => {
+	_renderLogin = (iconLogin,iconLogout) => {
 		return (
 		this.state.isLogin ? 
 		<TouchableOpacity onPress={this._goToLogout}>
 			<View style={styles.drawerListItem}>
-				{iconLogin}
+				{iconLogout}
 				<Text style={styles.drawerListItemText}>
 					Logout
 				</Text>
@@ -96,17 +102,17 @@ class Drawer extends Component {
 		
 	}
 	_renderAvatar = () => {
-		if(this.state.isLogin){
-			var user = firebase.auth().currentUser;
-			//  firebase.database().ref('users/' + user.uid).once('value').then( (snapshot) => {
-			// 		  console.log(snapshot.val().avatar,'111111111111')
-			// 		this.setState({ avatarUser: snapshot.val().avatar})
-			// 	  })
-			console.log(user,'usersss')
-		}
+		const avt = this.state.avatarUser
 		return this.state.isLogin ? 
 			<View style={styles.avatarUser}>
-				<Image source={{uri : this.state.avatarUser}} style={{height: 100, width:100, borderRadius:50, backgroundColor: 'black'}} />
+				<Image source={{uri : avt.toString()}} style={{height: 100, width:100, borderRadius:50, backgroundColor: 'black'}} />
+				<TouchableOpacity>
+					<View style={styles.drawerListItem}>
+						<Text style={styles.fullname}>
+							{this.state.fullname}
+						</Text>
+					</View>
+				</TouchableOpacity>
 			</View> : null
 	}
 	_goToLogout = async () => {
@@ -114,10 +120,12 @@ class Drawer extends Component {
 		await firebase.auth().signOut();
 	}
 	render() {
+		console.log(this.props,'this props trong draw')
 		const iconSearch = (<Icon name="md-search" size={26} color="#9F9F9F" style={[styles.drawerListIcon, { paddingLeft: 2 }]} />);
 		const iconMovies = (<Icon name="md-film" size={26} color="#9F9F9F" style={[styles.drawerListIcon, { paddingLeft: 3 }]} />);
 		const iconTV = (<Icon name="ios-desktop" size={26} color="#9F9F9F" style={styles.drawerListIcon} />);
-		const iconLogin = (<Icon name="ios-desktop" size={26} color="#9F9F9F" style={styles.drawerListIcon} />);
+		const iconLogin = (<IconLogin name="login" size={26} color="#9F9F9F" style={styles.drawerListIcon} />);
+		const iconLogout = (<IconLogin name="logout" size={26} color="#9F9F9F" style={styles.drawerListIcon} />);
 
 		return (
 			<LinearGradient colors={['rgba(0, 0, 0, 0.7)', 'rgba(0,0,0, 0.9)', 'rgba(0,0,0, 1)']} style={styles.linearGradient}>
@@ -147,7 +155,7 @@ class Drawer extends Component {
 							</Text>
 						</View>
 						<View>
-							{this._renderLogin(iconLogin)}
+							{this._renderLogin(iconLogin,iconLogout)}
 						</View>
 					</View>
 					<Text style={styles._version}>

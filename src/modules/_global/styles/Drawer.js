@@ -10,7 +10,7 @@ const styles = StyleSheet.create({
 
 	},
 	avatarUser:{
-		marginBottom: 30,
+		marginBottom: 10,
 		marginLeft: 30
 	},
 	drawerListIcon: {
@@ -25,6 +25,12 @@ const styles = StyleSheet.create({
 	logo: {
 		width: 66,
 		height: 58,
+	},
+	fullname: {
+		color: 'white',
+		// fontWeight: 'bold',
+		fontSize: 18,
+		flex: 1,
 	},
 	drawerListItem: {
 		flexDirection: 'row',
@@ -47,7 +53,7 @@ const styles = StyleSheet.create({
 		flex: 1
 	},
 	_version: {
-		color: '#3c3c3c',
+		color: 'white',
 		position: 'absolute',
 		bottom: 25,
 		marginLeft: 53

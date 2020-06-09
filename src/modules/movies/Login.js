@@ -22,35 +22,32 @@ class Login extends Component {
       avatarUser: ''
     };
   }
-  componentDidMount = async () => {
-  
+  componentDidMount = () => {
+  console.log(this.props,'props trong login')
     
   }
   onPressLogin = async () => {
     this.setState({isLoading: true})
-   await firebase.auth().signInWithEmailAndPassword(this.state.email, this.state.password).catch((error) => {
+   await firebase.auth().signInWithEmailAndPassword(this.state.email, this.state.password)
+   .then(data => {
+     console.log(data,'data login thanh cong')
+     this.setState({isLoading: false});
+     Alert.alert(
+        'Login successful',
+        `Welcome ${data.user.email}`,
+        [
+          { text: 'OK', onPress: () => console.log('OK Pressed') }
+        ],
+        { cancelable: false }
+      );
+     this.props.navigator.popToRoot({
+       screen: 'movieapp.Movies',
+     })
+   })
+   .catch((error) => {
       // Handle Errors here.
       var errorMessage = error.message;
       this.setState({ error: errorMessage });
-    });
-    firebase.auth().onAuthStateChanged((user) => {
-      if (user) {
-        // User is signed in.
-        this.props.navigator.popToRoot({
-          screen: 'movieapp.Movies'
-        });
-        this.setState({isLoading: false});
-        Alert.alert(
-          'Login successful',
-          `Welcome ${user.email}`,
-          [
-            { text: 'OK', onPress: () => console.log('OK Pressed') }
-          ],
-          { cancelable: false }
-        );
-      } else {
-        // User is signed out.
-      }
     });
   }
   onPressFacebook = () => {
