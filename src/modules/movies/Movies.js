@@ -149,6 +149,7 @@ class Movies extends Component {
 						<CardOne key={info.id} info={info} viewMovie={this._viewMovie} />
 					))}
 				</Swiper>
+				
 				<View>
 					<View style={styles.listHeading}>
 						<Text style={styles.listHeadingLeft}>Popular</Text>

@@ -15,7 +15,8 @@ const ProgressBar = () => (
 const styles = StyleSheet.create({
 	progressBar: {
 		flex: 1,
-		justifyContent: 'center'
+		justifyContent: 'center',
+		marginTop: 50
 	}
 });
 
