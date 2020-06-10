@@ -23,14 +23,13 @@ class Login extends Component {
     };
   }
   componentDidMount = () => {
-  console.log(this.props,'props trong login')
     
   }
   onPressLogin = async () => {
     this.setState({isLoading: true})
    await firebase.auth().signInWithEmailAndPassword(this.state.email, this.state.password)
    .then(data => {
-     console.log(data,'data login thanh cong')
+     console.log('login thanh cong')
      this.setState({isLoading: false});
      Alert.alert(
         'Login successful',

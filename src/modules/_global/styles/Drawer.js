@@ -26,10 +26,16 @@ const styles = StyleSheet.create({
 		width: 66,
 		height: 58,
 	},
-	fullname: {
+	changeAvatar: {
 		color: 'white',
 		// fontWeight: 'bold',
 		fontSize: 18,
+		flex: 1,
+	},
+	fullname: {
+		color: 'white',
+		fontSize: 25,
+		paddingLeft: 15,
 		flex: 1,
 	},
 	drawerListItem: {
@@ -37,6 +43,12 @@ const styles = StyleSheet.create({
 		alignItems: 'center',
 		marginBottom: 23
 	},
+	// drawerListItemUser: {
+	// 	flexDirection: 'row',
+	// 	// marginLeft: 10,
+	// 	// alignItems: 'center',
+	// 	marginBottom: 23
+	// },
 	drawerListItemText: {
 		color: 'white',
 		fontWeight: 'bold',
