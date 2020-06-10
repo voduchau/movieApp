@@ -12,6 +12,7 @@ import Icon from 'react-native-vector-icons/Ionicons';
 import IconLogin from 'react-native-vector-icons/SimpleLineIcons';
 import LinearGradient from 'react-native-linear-gradient';
 import firebaseConfig from '../_global/firebase/firebaseApp';
+import ImagePicker from 'react-native-image-picker';
 import styles from './styles/Drawer';
 import 'firebase/firestore';
 import firebase from 'firebase';
@@ -20,15 +21,24 @@ import firebase from 'firebase';
 if (!firebase.apps.length) {
 	firebase.initializeApp(firebaseConfig)
   }
-  const defaultAvatar = 'https://i2.wp.com/www.winhelponline.com/blog/wp-content/uploads/2017/12/user.png?fit=256%2C256&quality=100&ssl=1'
+const options = {
+	title: 'Select Avatar',
+	customButtons: [{ name: 'fb', title: 'Choose Photo from Facebook' }],
+	storageOptions: {
+	  skipBackup: true,
+	  path: 'images',
+	},
+  };
+  
+var defaultAvatar = 'https://i2.wp.com/www.winhelponline.com/blog/wp-content/uploads/2017/12/user.png?fit=256%2C256&quality=100&ssl=1'
 class Drawer extends Component {
 	constructor(props) {
 		super(props);
 		this.state = {
 			isLogin: false,
 			userID: '',
-			fullname: '',
-			avatarUser: ""
+			currentUser: [],
+			avatarSource: ''
 		}
 		this._goToMovies = this._goToMovies.bind(this);
 		this._openSearch = this._openSearch.bind(this);
@@ -43,18 +53,24 @@ class Drawer extends Component {
 			title: 'Search Movie'
 		});
 	}
-	componentDidMount = () => {
-		firebase.auth().onAuthStateChanged( async (user) => {
-			if (user) {
-				await firebase.database().ref('users/' + user.uid).once('value').then( (snapshot) => {
-					this.setState({ avatarUser: snapshot.val().avatar})
-					this.setState({ fullname: snapshot.val().fullname})
-			  	})
-
-			  	this.setState({ isLogin: true})
-			} else {
-			}
-		  });
+	componentDidMount = async () => {
+		await firebase.auth().onAuthStateChanged(async (user) => {
+				if (user) {
+					this.setState({userID: user.uid})
+				  // User is signed in.
+					await firebase.database().ref('users/' + user.uid).once('value').then( (snapshot) => {
+					this.setState({ 
+						currentUser: snapshot.val(),
+						avatarSource: {uri : snapshot.val().avatar},
+						fullname: snapshot.val().fullname,
+					})
+					console.log(2222222222222222222222222222,' avatar user')
+				  })
+				  this.setState({isLogin:true})
+				} else {
+				  // No user is signed in.
+				}
+			  });
 	}
 
 	_goToMovies() {
@@ -79,6 +95,29 @@ class Drawer extends Component {
 		});
 	}
 
+	_changeAvatar = (userID) => {
+		ImagePicker.showImagePicker(options, (response) => {
+			console.log('Response = ', response);
+		  
+			if (response.didCancel) {
+			  console.log('User cancelled image picker');
+			} else if (response.error) {
+			  console.log('ImagePicker Error: ', response.error);
+			} else if (response.customButton) {
+			  console.log('User tapped custom button: ', response.customButton);
+			} else {
+			  const source = { uri: response.uri };
+			firebase.database().ref('users/'+ userID).update({avatar: response.uri})
+			  // You can also display the image using data:
+			  // const source = { uri: 'data:image/jpeg;base64,' + response.data };
+		  
+			  this.setState({
+				avatarSource: source,
+			  });
+			}
+		  });
+	}
+
 	_renderLogin = (iconLogin,iconLogout) => {
 		return (
 		this.state.isLogin ? 
@@ -101,15 +140,46 @@ class Drawer extends Component {
 		)
 		
 	}
-	_renderAvatar = () => {
-		const avt = this.state.avatarUser
+	_renderAvatar = (iconUser) => {
+		if(this.state.avatarSource != '' && this.state.isLogin){
+			return this.state.isLogin ? 
+			<View>
+				<View style={styles.avatarUser}>
+				<Image source={this.state.avatarSource} style={{height: 100, width:100, borderRadius:50, backgroundColor: 'black'}} />
+				<TouchableOpacity onPress={()=>this._changeAvatar(this.state.userID)}>
+					<View style={styles.drawerListItem}>
+						<Text style={styles.changeAvatar}>
+							change avatar
+						</Text>
+					</View>
+				</TouchableOpacity>
+			</View>
+			<TouchableOpacity>
+				<View style={styles.drawerListItem}>
+					{iconUser}
+					<Text style={styles.fullname}>
+						{this.state.currentUser.fullname}
+					</Text>
+				</View>
+			</TouchableOpacity>
+			</View>
+			: null
+		}
 		return this.state.isLogin ? 
 			<View style={styles.avatarUser}>
-				<Image source={{uri : avt.toString()}} style={{height: 100, width:100, borderRadius:50, backgroundColor: 'black'}} />
+				<Image source={{uri : defaultAvatar}} style={{height: 100, width:100, borderRadius:50, backgroundColor: 'black'}} />
 				<TouchableOpacity>
 					<View style={styles.drawerListItem}>
 						<Text style={styles.fullname}>
-							{this.state.fullname}
+							change avatar
+						</Text>
+					</View>
+				</TouchableOpacity>
+				<TouchableOpacity>
+					<View style={styles.drawerListItem}>
+						{iconUser}
+						<Text style={styles.fullname}>
+							{this.state.currentUser.fullname}
 						</Text>
 					</View>
 				</TouchableOpacity>
@@ -125,11 +195,12 @@ class Drawer extends Component {
 		const iconTV = (<Icon name="ios-desktop" size={26} color="#9F9F9F" style={styles.drawerListIcon} />);
 		const iconLogin = (<IconLogin name="login" size={26} color="#9F9F9F" style={styles.drawerListIcon} />);
 		const iconLogout = (<IconLogin name="logout" size={26} color="#9F9F9F" style={styles.drawerListIcon} />);
+		const iconUser = (<IconLogin name="user" size={25} color="#9F9F9F" style={styles.drawerListIcon} />);
 
 		return (
 			<LinearGradient colors={['rgba(0, 0, 0, 0.7)', 'rgba(0,0,0, 0.9)', 'rgba(0,0,0, 1)']} style={styles.linearGradient}>
 				<View style={styles.container}>
-				{this._renderAvatar()}
+				{this._renderAvatar(iconUser)}
 					<View style={styles.drawerList}>
 						<TouchableOpacity onPress={this._openSearch}>
 							<View style={styles.drawerListItem}>
