@@ -6,12 +6,15 @@ import {
 	ScrollView,
 	Text,
 	ToastAndroid,
-	View
+	TouchableOpacity,
+	View,
+	TextInput 
 } from 'react-native';
 import Icon from 'react-native-vector-icons/Ionicons';
 import LinearGradient from 'react-native-linear-gradient';
 import ScrollableTabView from 'react-native-scrollable-tab-view';
 import Swiper from 'react-native-swiper';
+import Send from 'react-native-vector-icons/MaterialCommunityIcons';
 import axios from 'axios';
 import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
@@ -22,6 +25,7 @@ import DefaultTabBar from '../_global/scrollableTabView/DefaultTabBar';
 import Info from './tabs/Info';
 import ProgressBar from '../_global/ProgressBar';
 import Trailers from './tabs/Trailers';
+import { AddComment, LoadCurrentUser } from './movies.actions';
 import styles from './styles/Movie';
 import { TMDB_IMG_URL, YOUTUBE_API_KEY, YOUTUBE_URL } from '../../constants/api';
 
@@ -38,7 +42,8 @@ class Movie extends Component {
 			showSimilarMovies: true,
 			trailersTabHeight: null,
 			tab: 0,
-			youtubeVideos: []
+			youtubeVideos: [],
+			comment: null
 		};
 
 		this._getTabHeight = this._getTabHeight.bind(this);
@@ -53,6 +58,7 @@ class Movie extends Component {
 
 	componentWillMount() {
 		this._retrieveDetails();
+		this.props.actions.LoadCurrentUser()
 	}
 
 	componentWillReceiveProps(nextProps) {
@@ -140,7 +146,9 @@ class Movie extends Component {
 			}
 		});
 	}
-
+	handleAddComment = () => {
+		this.props.actions.AddComment(this.state.comment,this.props.UserID)
+	}
 	_onNavigatorEvent(event) {
 		if (event.type === 'NavBarButtonPress') {
 			if (event.id === 'close') {
@@ -153,7 +161,7 @@ class Movie extends Component {
 		const iconStar = <Icon name="md-star" size={16} color="#F5B642" />;
 		const { details } = this.props;
 		const info = details;
-
+		const iconSend = <Send name="send" size={26} color="#9F9F9F" style={styles.drawerListIcon} />;
 		let height;
 		if (this.state.tab === 0) height = this.state.infoTabHeight;
 		if (this.state.tab === 1) height = this.state.castsTabHeight;
@@ -232,6 +240,18 @@ class Movie extends Component {
 						</ScrollableTabView>
 					</View>
 				</View>
+				<View style={styles.CommentSection}>
+					<Text style={styles.commentText}>Comments</Text>
+					<TextInput
+					  onChangeText={text => this.setState({comment: text })}
+					  placeholder="add your comment"
+					  value={this.state.comment}
+					  style={styles.input}
+    				/>
+					<TouchableOpacity onPress={()=>this.handleAddComment()}>
+						{iconSend}
+					</TouchableOpacity>
+				</View>
 			</ScrollView>
 		);
 	}
@@ -256,7 +276,8 @@ Movie.propTypes = {
 function mapStateToProps(state, ownProps) {
 	return {
 		details: state.movies.details,
-		similarMovies: state.movies.similarMovies
+		similarMovies: state.movies.similarMovies,
+		UserID: state.LoadUser
 	};
 }
 
