@@ -18,7 +18,8 @@ import Send from 'react-native-vector-icons/MaterialCommunityIcons';
 import axios from 'axios';
 import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
-
+import {GetCurrentUser} from '../../action/GetUser';
+import {AddComent} from '../../action/AddComent';
 import * as moviesActions from './movies.actions';
 import Casts from './tabs/Casts';
 import DefaultTabBar from '../_global/scrollableTabView/DefaultTabBar';
@@ -42,7 +43,7 @@ class Movie extends Component {
 			trailersTabHeight: null,
 			tab: 0,
 			youtubeVideos: [],
-			comment: null
+			comment: ''
 		};
 
 		this._getTabHeight = this._getTabHeight.bind(this);
@@ -57,6 +58,7 @@ class Movie extends Component {
 
 	componentWillMount() {
 		this._retrieveDetails();
+		this.props.GetCurrentUser();
 	}
 
 	componentWillReceiveProps(nextProps) {
@@ -152,12 +154,15 @@ class Movie extends Component {
 			}
 		}
 	}
+	_AddComment = () => {
+		this.props.AddComent(this.props.CurrentUser.userID,this.state.comment,this.props.details.id)
+	}
 
 	render() {
 		const iconStar = <Icon name="md-star" size={16} color="#F5B642" />;
 		const { details } = this.props;
 		const info = details;
-		const iconSend = <Send name="send" size={26} color="#9F9F9F" style={styles.drawerListIcon} />;
+		const iconSend = <Send name="send" size={26} color="#9F9F9F" />;
 		let height;
 		if (this.state.tab === 0) height = this.state.infoTabHeight;
 		if (this.state.tab === 1) height = this.state.castsTabHeight;
@@ -235,6 +240,22 @@ class Movie extends Component {
 							<Trailers tabLabel="TRAILERS" youtubeVideos={this.state.youtubeVideos} openYoutube={this._openYoutube} getTabHeight={this._getTabHeight} />
 						</ScrollableTabView>
 					</View>
+					<Text style={styles.comment1}>Comment:</Text>
+					<View style={styles.containerComment}>
+						<View style={styles.InputContainer}>
+        				  <TextInput
+        				    style={styles.body}
+        				    placeholder="E-mail or phone number"
+        				    onChangeText={text => this.setState({comment: text})}
+        				    value={this.state.comment}
+        				    // placeholderTextColor= "grey"
+        				    underlineColorAndroid="transparent"
+        				  />
+						  <TouchableOpacity style={styles.iconsend} onPress={() => this._AddComment()}>
+							  {iconSend}
+						  </TouchableOpacity>
+        				</View>
+					</View>
 				</View>
 			</ScrollView>
 		);
@@ -258,16 +279,19 @@ Movie.propTypes = {
 };
 
 function mapStateToProps(state, ownProps) {
+	console.log(state.movies.details,'movies detail');
 	return {
 		details: state.movies.details,
 		similarMovies: state.movies.similarMovies,
-		UserID: state.LoadUser
+		CurrentUser: state.LoadUser
 	};
 }
 
 function mapDispatchToProps(dispatch) {
 	return {
-		actions: bindActionCreators(moviesActions, dispatch)
+		actions: bindActionCreators(moviesActions, dispatch),
+		GetCurrentUser: bindActionCreators(GetCurrentUser,dispatch),
+		AddComent: bindActionCreators(AddComent,dispatch)
 	};
 }
 

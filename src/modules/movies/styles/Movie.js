@@ -95,8 +95,37 @@ const styles = StyleSheet.create({
 	cardGenreItem: {
 		textAlign: 'left',
 		fontSize: 11,
-		marginRight: 5,
+		marginRight: 3,
 		color: 'white'
+	},
+	InputContainer: {
+		width: "80%",
+		// marginTop: 30,
+		flexDirection: 'row',
+		borderWidth: 1,
+		borderStyle: "solid",
+		borderColor: "grey",
+		borderRadius: 25,
+	},
+	iconsend: {
+		// marginLeft:5,
+		marginTop: 7,
+	},
+	comment1: {
+		color: 'white',
+		marginTop: 8,
+		marginBottom: 15,
+		fontSize: 18
+	},
+	containerComment: {
+		alignItems: "center"
+	},
+	body: {
+		height: 42,
+		width: '90%',
+		paddingLeft: 20,
+		paddingRight: 20,
+		color: "#696969"
 	},
 	cardNumbers: {
 		flexDirection: 'row',
