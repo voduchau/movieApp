@@ -127,38 +127,3 @@ export function retrieveMovieDetails(movieId) {
 }
 
 //add comment
-
-export const LoadCurrentUser = () => {
-	return  ( (dispatch)=> {
-		console.log('xxxxxxxxxxxxxxx')
-		const user = firebase.auth().currentUser;
-		console.log(user,'user')
-		// firebase.auth().onAuthStateChanged( (user) => {
-		// 	console.log('vao loaded current user')
-			if(user){
-				dispatch({
-					type: "LOAD_USER",
-					payload: user.uid
-				})
-			}
-			else {
-				console.log('user chưa login')
-				dispatch({
-					type: "LOAD_USER",
-					payload: ''
-				})
-			}
-		// })
-	})
-}
-
-export const AddComment = (content,UserID) => {
-	return async (dispatch) => {
-		console.log(content + UserID ,'vao action')
-		const data = 'name: hau'
-		dispatch({ 
-			type: 'ADD_COMMENT',
-			payload: data
-		})
-	}
-}

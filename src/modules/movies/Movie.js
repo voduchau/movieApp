@@ -25,7 +25,6 @@ import DefaultTabBar from '../_global/scrollableTabView/DefaultTabBar';
 import Info from './tabs/Info';
 import ProgressBar from '../_global/ProgressBar';
 import Trailers from './tabs/Trailers';
-import { AddComment, LoadCurrentUser } from './movies.actions';
 import styles from './styles/Movie';
 import { TMDB_IMG_URL, YOUTUBE_API_KEY, YOUTUBE_URL } from '../../constants/api';
 
@@ -58,7 +57,6 @@ class Movie extends Component {
 
 	componentWillMount() {
 		this._retrieveDetails();
-		this.props.actions.LoadCurrentUser()
 	}
 
 	componentWillReceiveProps(nextProps) {
@@ -146,9 +144,7 @@ class Movie extends Component {
 			}
 		});
 	}
-	handleAddComment = () => {
-		this.props.actions.AddComment(this.state.comment,this.props.UserID)
-	}
+
 	_onNavigatorEvent(event) {
 		if (event.type === 'NavBarButtonPress') {
 			if (event.id === 'close') {
@@ -239,18 +235,6 @@ class Movie extends Component {
 							<Trailers tabLabel="TRAILERS" youtubeVideos={this.state.youtubeVideos} openYoutube={this._openYoutube} getTabHeight={this._getTabHeight} />
 						</ScrollableTabView>
 					</View>
-				</View>
-				<View style={styles.CommentSection}>
-					<Text style={styles.commentText}>Comments</Text>
-					<TextInput
-					  onChangeText={text => this.setState({comment: text })}
-					  placeholder="add your comment"
-					  value={this.state.comment}
-					  style={styles.input}
-    				/>
-					<TouchableOpacity onPress={()=>this.handleAddComment()}>
-						{iconSend}
-					</TouchableOpacity>
 				</View>
 			</ScrollView>
 		);

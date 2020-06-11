@@ -69,6 +69,7 @@ class Drawer extends Component {
 		 firebase.auth().onAuthStateChanged((user) => {
 				if (user) {
 					console.log('user da login')
+					this.setState({isLogin:true})
 					this.setState({userID: user.uid})
 				  // User is signed in.
 				firebase.database().ref('users/' + user.uid).once('value').then( (snapshot) => {
@@ -79,7 +80,6 @@ class Drawer extends Component {
 				  }).catch(error => {
 					  console.log(error);
 				  })
-				  this.setState({isLogin:true})
 				} else {
 				  // No user is signed in.
 				  console.log('chua login')
@@ -151,6 +151,7 @@ class Drawer extends Component {
 			this.setState({avatarSource: ''});
 			if (response.didCancel) {
 			  console.log('User cancelled image picker');
+			  this.setState({avatarSource: this.state.currentUser.avatar})
 			} else if (response.error) {
 			  console.log('ImagePicker Error: ', response.error);
 			} else if (response.customButton) {
@@ -191,8 +192,7 @@ class Drawer extends Component {
 	}
 	_renderAvatar = (iconUser) => {
 		if(this.state.avatarSource != '' && this.state.isLogin){
-			console.log('vao if',this.state.avatarSource)
-			return this.state.isLogin ? 
+			return(
 			<View>
 				<View style={styles.avatarUser}>
 				<Image source={{uri: this.state.avatarSource}} style={{height: 100, width:100, borderRadius:50, backgroundColor: 'black'}} />
@@ -213,9 +213,11 @@ class Drawer extends Component {
 				</View>
 			</TouchableOpacity>
 			</View>
-			: null
+			)
 		}
-		return this.state.isLogin ? 
+		else if(this.state.isLogin && this.state.avatarSource == '')
+		{
+			return this.state.isLogin ? 
 			<View style={styles.avatarUser}>
 				<Image source={{uri : defaultAvatar}} style={{height: 100, width:100, borderRadius:50, backgroundColor: 'black'}} />
 				<TouchableOpacity onPress={()=>this._changeAvatar(this.state.userID)}>
@@ -234,6 +236,12 @@ class Drawer extends Component {
 					</View>
 				</TouchableOpacity>
 			</View> : null
+		}
+		return (
+			<View>
+				<Text>Please Login</Text>
+			</View>
+		)
 	}
 	_goToLogout = async () => {
 		this.setState({ isLogin: false})
@@ -250,23 +258,6 @@ class Drawer extends Component {
 		return (
 			<LinearGradient colors={['rgba(0, 0, 0, 0.7)', 'rgba(0,0,0, 0.9)', 'rgba(0,0,0, 1)']} style={styles.linearGradient}>
 				<View style={styles.container}>
-					{/* {
-						(()=>{
-							switch(this.state.avatarSource){
-								case null:
-									return null;
-								case '':
-									return <ActivityIndicator />;
-								default:
-									return (
-										<>
-										<Image source={{uri : this.state.avatarSource}} style={{height: 100, width:100, borderRadius:50, backgroundColor: 'black'}} />
-										<Text>{this.state.avatarSource}</Text>
-										</>
-									)
-							}
-						})
-					} */}
 				{this._renderAvatar(iconUser)}
 					<View style={styles.drawerList}>
 						<TouchableOpacity onPress={this._openSearch}>
