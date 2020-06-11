@@ -17,6 +17,25 @@ const styles = StyleSheet.create({
 		flex: 1,
 		marginTop: 157
 	},
+	input: {
+		flex: 1,
+		marginLeft: 10,
+		backgroundColor: '#fff',
+		color: '#424242',
+	},
+	CommentSection: {
+		flex: 1,
+		flexDirection: 'row',
+		// justifyContent: 'center',
+		// alignItems: 'center',
+		backgroundColor: '#fff',
+	},
+	commentText: {
+		color: 'white',
+		fontSize: 18,
+		fontWeight: 'bold',
+		paddingTop: 10
+	},
 	progressBar: {
 		backgroundColor: '#0a0a0a',
 		flex: 1,

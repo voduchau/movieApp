@@ -29,7 +29,7 @@ class Login extends Component {
     this.setState({isLoading: true})
    await firebase.auth().signInWithEmailAndPassword(this.state.email, this.state.password)
    .then(data => {
-     console.log('login thanh cong')
+     console.log(data,'login thanh cong')
      this.setState({isLoading: false});
      Alert.alert(
         'Login successful',
@@ -48,9 +48,6 @@ class Login extends Component {
       var errorMessage = error.message;
       this.setState({ error: errorMessage });
     });
-  }
-  onPressFacebook = () => {
-
   }
   onPressFacebook = () => {
 
