@@ -4,13 +4,14 @@ if (!firebase.apps.length) {
 	firebase.initializeApp(firebaseConfig)
   }
 
-export const AddComent = (userID,content,filmID) => {
+export const AddComent = (userID, photoURL, content, filmID) => {
     console.log('vao dayyyyyyyyyyyyyyyyy')
     return (dispatch) => {
         firebase.database().ref('comments/' + filmID).push({
             userID: userID,
             content: content,
             // movieID: filmID,
+            photoURL: photoURL,
             createdAt: new Date().getTime()
         })
             dispatch({

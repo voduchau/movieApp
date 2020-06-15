@@ -40,6 +40,7 @@ const styles = StyleSheet.create({
 		// borderStyle: "solid",
 		// borderColor: "grey",
 		// borderRadius: 25,
+		position: 'relative'
 	},
 	avatar: {
 		height: 40,
@@ -47,17 +48,20 @@ const styles = StyleSheet.create({
 		borderRadius:50,
 		backgroundColor: 'black',
 		marginLeft: 10,
-		flexBasis: 20
+		marginRight: 7
 	},
 	iconsend: {
 		// marginLeft:5,
-		// marginTop: 7,
+		marginTop: 7,
 		width: 40,
 		height: 40,
-		flexBasis: 20
+		position: 'absolute',
+		right: 0,
+		top: 0
 	},
 	containerComment: {
-		alignItems: "center"
+		alignItems: 'flex-start',
+		marginRight: 10
 	},
 	body: {
 		height: 40,
@@ -68,9 +72,8 @@ const styles = StyleSheet.create({
 		borderColor: "grey",
 		borderRadius: 25,
 		paddingLeft: 20,
-		paddingRight: 20,
-		color: "#696969",
-		flexBasis: 60
+		paddingRight: 50,
+		color: "#696969"
 	},
 	comment1: {
 		color: 'white',

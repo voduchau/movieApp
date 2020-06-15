@@ -21,14 +21,21 @@ class Comments extends Component {
         this.props.GetComments(this.props.info.id)
 
     }
+
+    // componentDidUpdate = (prevProps) => {
+    //     console.log(prevProps,'prevProps');
+    //     if (this.props.CurrentUser.photoURL != prevProps.CurrentUser.photoURL) {
+    //         this.props.GetCurrentUser();
+    //     }
+    // }
     _AddComment = () => {
-        this.props.AddComent(this.props.CurrentUser.userID,this.state.comment,this.props.info.id)
+        this.props.AddComent(this.props.CurrentUser.userID,this.props.CurrentUser.photoURL,this.state.comment,this.props.info.id)
         this.props.GetComments(this.props.info.id)
+        this.setState({comment: ''})
     }
-    _renderComment = () => {
-        // console.log(this.props.AllComments,'all comment trong state redux');
-    }
+
     render() {
+        console.log('vao tab commetn')
         const iconSend = <Send name="send" size={26} color="#9F9F9F" />;
         return (
             <View>
@@ -37,11 +44,14 @@ class Comments extends Component {
                         data={this.props.AllComments}
                         keyExtractor={(item,index) => index}
                         renderItem={ ({item})=> {
-                            console.log(item.content,'itemmmm ok')
-                        return <Text style={styles.comment2}>{item.content}</Text>
+                        return (
+                            <View style={styles.InputContainer}>
+                            <Image source={{ uri: item.photoURL}} style={styles.avatar} />
+                                <Text style={{color: 'white', fontSize: 20}}>{item.content}</Text>
+        				    </View>
+                        )
                         }}
                     />
-                    {this._renderComment()}
 					<View style={styles.containerComment}>
 						<View style={styles.InputContainer}>
                             <Image source={{ uri: this.props.CurrentUser.photoURL}} style={styles.avatar} />
@@ -63,6 +73,7 @@ class Comments extends Component {
     }
 }
 function mapStateToProps(state, ownProps) {
+    console.log(state.LoadUser,'loadt user trong comment');
 	return {
         CurrentUser: state.LoadUser,
         AllComments: state.LoadComments

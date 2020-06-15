@@ -16,5 +16,5 @@ export function registerScreens(store, Provider) {
 	Navigation.registerComponent('movieapp.Search', () => Search, store, Provider);
 	Navigation.registerComponent('movieapp.Login', () => Login, store, Provider);
 	Navigation.registerComponent('movieapp.Signup', () => Signup, store, Provider);
-	Navigation.registerComponent('movieapp.Drawer', () => Drawer);
+	Navigation.registerComponent('movieapp.Drawer', () => Drawer,store, Provider);
 }

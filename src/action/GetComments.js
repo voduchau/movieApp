@@ -6,7 +6,7 @@ if (!firebase.apps.length) {
 
 export const GetComments = (id) => async (dispatch) => {
     const data = await firebase.database().ref('comments/' + id).once('value');
-
+    console.log(data,'alo alo')
     return dispatch({
         type: 'LOAD_COMMENTS',
         payload: data.val()
