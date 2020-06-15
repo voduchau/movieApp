@@ -69,13 +69,14 @@ class Drawer extends Component {
 		 firebase.auth().onAuthStateChanged((user) => {
 				if (user) {
 					console.log('user da login')
-					this.setState({isLogin:true})
-					this.setState({userID: user.uid})
 				  // User is signed in.
 				firebase.database().ref('users/' + user.uid).once('value').then( (snapshot) => {
+					console.log(snapshot.val(),'lay userrrrrrrrrrr')
 					this.setState({ 
 						currentUser: snapshot.val(),
 						avatarSource: snapshot.val().avatar,
+						isLogin:true,
+						userID: user.uid
 					})
 				  }).catch(error => {
 					  console.log(error);
@@ -116,6 +117,7 @@ class Drawer extends Component {
 			// URL of the image uploaded on Firebase storage
 			console.warn(url);   
 			firebase.database().ref('users/'+ this.state.userID).update({avatar: url})
+			firebase.auth().currentUser.updateProfile({photoURL: url});
 			this.setState({avatarSource: url})     
 		  })
 		  .catch((error) => {

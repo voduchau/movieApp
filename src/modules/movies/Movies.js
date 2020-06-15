@@ -145,7 +145,7 @@ class Movies extends Component {
 					autoplayTimeout={4}
 					showsPagination={false}
 					height={248}>
-					{nowPlayingMovies.results.map(info => (
+					{nowPlayingMovies.results && nowPlayingMovies.results.map(info => (
 						<CardOne key={info.id} info={info} viewMovie={this._viewMovie} />
 					))}
 				</Swiper>
@@ -162,7 +162,7 @@ class Movies extends Component {
 						</TouchableOpacity>
 					</View>
 					<ScrollView horizontal showsHorizontalScrollIndicator={false}>
-						{popularMovies.results.map(info => (
+						{popularMovies.results && popularMovies.results.map(info => (
 							<CardTwo key={info.id} info={info} viewMovie={this._viewMovie} />
 						))}
 					</ScrollView>

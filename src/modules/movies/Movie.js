@@ -6,9 +6,7 @@ import {
 	ScrollView,
 	Text,
 	ToastAndroid,
-	TouchableOpacity,
 	View,
-	TextInput 
 } from 'react-native';
 import Icon from 'react-native-vector-icons/Ionicons';
 import LinearGradient from 'react-native-linear-gradient';
@@ -18,13 +16,15 @@ import Send from 'react-native-vector-icons/MaterialCommunityIcons';
 import axios from 'axios';
 import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
-
+import {GetCurrentUser} from '../../action/GetUser';
+import {AddComent} from '../../action/AddComent';
 import * as moviesActions from './movies.actions';
 import Casts from './tabs/Casts';
 import DefaultTabBar from '../_global/scrollableTabView/DefaultTabBar';
 import Info from './tabs/Info';
 import ProgressBar from '../_global/ProgressBar';
 import Trailers from './tabs/Trailers';
+import Comments from './tabs/Comments';
 import styles from './styles/Movie';
 import { TMDB_IMG_URL, YOUTUBE_API_KEY, YOUTUBE_URL } from '../../constants/api';
 
@@ -34,6 +34,7 @@ class Movie extends Component {
 
 		this.state = {
 			castsTabHeight: null,
+			commentsTabHeight: null,
 			heightAnim: null,
 			infoTabHeight: null,
 			isLoading: true,
@@ -42,7 +43,7 @@ class Movie extends Component {
 			trailersTabHeight: null,
 			tab: 0,
 			youtubeVideos: [],
-			comment: null
+			comment: ''
 		};
 
 		this._getTabHeight = this._getTabHeight.bind(this);
@@ -57,6 +58,7 @@ class Movie extends Component {
 
 	componentWillMount() {
 		this._retrieveDetails();
+		this.props.GetCurrentUser();
 	}
 
 	componentWillReceiveProps(nextProps) {
@@ -67,7 +69,8 @@ class Movie extends Component {
 		this.props.actions.retrieveMovieDetails(this.props.movieId)
 			.then(() => {
 				this._retrieveYoutubeDetails();
-			});
+			})
+			.catch((err) => {console.log(err,'err retrieveMovieDetails')})
 		if (isRefreshed && this.setState({ isRefreshing: false }));
 	}
 
@@ -110,6 +113,7 @@ class Movie extends Component {
 	_getTabHeight(tabName, height) {
 		if (tabName === 'casts') this.setState({ castsTabHeight: height });
 		if (tabName === 'trailers') this.setState({ trailersTabHeight: height });
+		if (tabName === 'comments') this.setState({ commentsTabHeight: height });
 	}
 
 	_retrieveYoutubeDetails() {
@@ -142,7 +146,9 @@ class Movie extends Component {
 			} else {
 				ToastAndroid.show(`RN Don't know how to handle this url ${youtubeUrl}`, ToastAndroid.SHORT);
 			}
-		});
+		}).catch(err => {
+			console.log(err, 'error canOpenURL')
+		})
 	}
 
 	_onNavigatorEvent(event) {
@@ -152,16 +158,20 @@ class Movie extends Component {
 			}
 		}
 	}
+	_AddComment = () => {
+		this.props.AddComent(this.props.CurrentUser.userID,this.state.comment,this.props.details.id)
+	}
 
 	render() {
 		const iconStar = <Icon name="md-star" size={16} color="#F5B642" />;
 		const { details } = this.props;
 		const info = details;
-		const iconSend = <Send name="send" size={26} color="#9F9F9F" style={styles.drawerListIcon} />;
+		const iconSend = <Send name="send" size={26} color="#9F9F9F" />;
 		let height;
 		if (this.state.tab === 0) height = this.state.infoTabHeight;
 		if (this.state.tab === 1) height = this.state.castsTabHeight;
 		if (this.state.tab === 2) height = this.state.trailersTabHeight;
+		if (this.state.tab === 3) height = this.state.commentsTabHeight;
 
 		return (
 			this.state.isLoading ? <View style={styles.progressBar}><ProgressBar /></View> :
@@ -233,8 +243,10 @@ class Movie extends Component {
 							<Info tabLabel="INFO" info={info} />
 							<Casts tabLabel="CASTS" info={info} getTabHeight={this._getTabHeight} />
 							<Trailers tabLabel="TRAILERS" youtubeVideos={this.state.youtubeVideos} openYoutube={this._openYoutube} getTabHeight={this._getTabHeight} />
+							<Comments tabLabel="COMMENTS" info={info}/>
 						</ScrollableTabView>
 					</View>
+					
 				</View>
 			</ScrollView>
 		);
@@ -261,13 +273,15 @@ function mapStateToProps(state, ownProps) {
 	return {
 		details: state.movies.details,
 		similarMovies: state.movies.similarMovies,
-		UserID: state.LoadUser
+		CurrentUser: state.LoadUser
 	};
 }
 
 function mapDispatchToProps(dispatch) {
 	return {
-		actions: bindActionCreators(moviesActions, dispatch)
+		actions: bindActionCreators(moviesActions, dispatch),
+		GetCurrentUser: bindActionCreators(GetCurrentUser,dispatch),
+		AddComent: bindActionCreators(AddComent,dispatch)
 	};
 }
 
