@@ -1,0 +1,79 @@
+import React, { Component, PropTypes } from 'react';
+import {View, Text, TextInput, TouchableOpacity, FlatList, Image} from 'react-native';
+import styles from './styles/Comments';
+import { bindActionCreators } from 'redux';
+import { connect } from 'react-redux';
+import {GetCurrentUser} from '../../../action/GetUser';
+import {AddComent} from '../../../action/AddComent';
+import {GetComments} from '../../../action/GetComments';
+import Send from 'react-native-vector-icons/MaterialCommunityIcons';
+class Comments extends Component {
+    constructor(props) {
+		super(props);
+
+		this.state = {
+			comment: ''
+		};
+
+    }
+    componentDidMount = () => {
+        this.props.GetCurrentUser();
+        this.props.GetComments(this.props.info.id)
+
+    }
+    _AddComment = () => {
+        this.props.AddComent(this.props.CurrentUser.userID,this.state.comment,this.props.info.id)
+        this.props.GetComments(this.props.info.id)
+    }
+    _renderComment = () => {
+        // console.log(this.props.AllComments,'all comment trong state redux');
+    }
+    render() {
+        const iconSend = <Send name="send" size={26} color="#9F9F9F" />;
+        return (
+            <View>
+                <Text style={styles.comment1}>Comment:</Text>
+                    <FlatList
+                        data={this.props.AllComments}
+                        keyExtractor={(item,index) => index}
+                        renderItem={ ({item})=> {
+                            console.log(item.content,'itemmmm ok')
+                        return <Text style={styles.comment2}>{item.content}</Text>
+                        }}
+                    />
+                    {this._renderComment()}
+					<View style={styles.containerComment}>
+						<View style={styles.InputContainer}>
+                            <Image source={{ uri: this.props.CurrentUser.photoURL}} style={styles.avatar} />
+        				    <TextInput
+        				        style={styles.body}
+        				        placeholder="E-mail or phone number"
+        				        onChangeText={text => this.setState({comment: text})}
+        				        value={this.state.comment}
+        				        // placeholderTextColor= "grey"
+        				        underlineColorAndroid="transparent"
+        				    />
+						    <TouchableOpacity style={styles.iconsend} onPress={() => this._AddComment()}>
+						    	  {iconSend}
+						    </TouchableOpacity>
+        				</View>
+					</View>
+            </View>
+        );
+    }
+}
+function mapStateToProps(state, ownProps) {
+	return {
+        CurrentUser: state.LoadUser,
+        AllComments: state.LoadComments
+	};
+}
+
+function mapDispatchToProps(dispatch) {
+	return {
+        AddComent: bindActionCreators(AddComent,dispatch),
+        GetCurrentUser: bindActionCreators(GetCurrentUser,dispatch),
+        GetComments: bindActionCreators(GetComments,dispatch)
+	};
+}
+export default connect(mapStateToProps, mapDispatchToProps)(Comments);

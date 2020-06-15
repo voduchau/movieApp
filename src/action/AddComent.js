@@ -5,11 +5,12 @@ if (!firebase.apps.length) {
   }
 
 export const AddComent = (userID,content,filmID) => {
+    console.log('vao dayyyyyyyyyyyyyyyyy')
     return (dispatch) => {
-        firebase.database().ref('comments/').push({
+        firebase.database().ref('comments/' + filmID).push({
             userID: userID,
             content: content,
-            movieID: filmID,
+            // movieID: filmID,
             createdAt: new Date().getTime()
         })
             dispatch({

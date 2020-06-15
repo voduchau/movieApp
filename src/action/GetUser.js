@@ -9,7 +9,7 @@ export const GetCurrentUser = () => {
     return async (dispatch) => {
         await firebase.auth().onAuthStateChanged((user) => {
             if(user){
-                console.log('action user da login')
+                console.log(user,'action user da login')
                 dispatch({
                     type: "LOAD_USER",
                     payload: user

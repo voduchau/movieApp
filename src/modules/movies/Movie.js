@@ -6,9 +6,7 @@ import {
 	ScrollView,
 	Text,
 	ToastAndroid,
-	TouchableOpacity,
 	View,
-	TextInput 
 } from 'react-native';
 import Icon from 'react-native-vector-icons/Ionicons';
 import LinearGradient from 'react-native-linear-gradient';
@@ -26,6 +24,7 @@ import DefaultTabBar from '../_global/scrollableTabView/DefaultTabBar';
 import Info from './tabs/Info';
 import ProgressBar from '../_global/ProgressBar';
 import Trailers from './tabs/Trailers';
+import Comments from './tabs/Comments';
 import styles from './styles/Movie';
 import { TMDB_IMG_URL, YOUTUBE_API_KEY, YOUTUBE_URL } from '../../constants/api';
 
@@ -35,6 +34,7 @@ class Movie extends Component {
 
 		this.state = {
 			castsTabHeight: null,
+			commentsTabHeight: null,
 			heightAnim: null,
 			infoTabHeight: null,
 			isLoading: true,
@@ -69,7 +69,8 @@ class Movie extends Component {
 		this.props.actions.retrieveMovieDetails(this.props.movieId)
 			.then(() => {
 				this._retrieveYoutubeDetails();
-			});
+			})
+			.catch((err) => {console.log(err,'err retrieveMovieDetails')})
 		if (isRefreshed && this.setState({ isRefreshing: false }));
 	}
 
@@ -112,6 +113,7 @@ class Movie extends Component {
 	_getTabHeight(tabName, height) {
 		if (tabName === 'casts') this.setState({ castsTabHeight: height });
 		if (tabName === 'trailers') this.setState({ trailersTabHeight: height });
+		if (tabName === 'comments') this.setState({ commentsTabHeight: height });
 	}
 
 	_retrieveYoutubeDetails() {
@@ -144,7 +146,9 @@ class Movie extends Component {
 			} else {
 				ToastAndroid.show(`RN Don't know how to handle this url ${youtubeUrl}`, ToastAndroid.SHORT);
 			}
-		});
+		}).catch(err => {
+			console.log(err, 'error canOpenURL')
+		})
 	}
 
 	_onNavigatorEvent(event) {
@@ -167,6 +171,7 @@ class Movie extends Component {
 		if (this.state.tab === 0) height = this.state.infoTabHeight;
 		if (this.state.tab === 1) height = this.state.castsTabHeight;
 		if (this.state.tab === 2) height = this.state.trailersTabHeight;
+		if (this.state.tab === 3) height = this.state.commentsTabHeight;
 
 		return (
 			this.state.isLoading ? <View style={styles.progressBar}><ProgressBar /></View> :
@@ -238,24 +243,10 @@ class Movie extends Component {
 							<Info tabLabel="INFO" info={info} />
 							<Casts tabLabel="CASTS" info={info} getTabHeight={this._getTabHeight} />
 							<Trailers tabLabel="TRAILERS" youtubeVideos={this.state.youtubeVideos} openYoutube={this._openYoutube} getTabHeight={this._getTabHeight} />
+							<Comments tabLabel="COMMENTS" info={info}/>
 						</ScrollableTabView>
 					</View>
-					<Text style={styles.comment1}>Comment:</Text>
-					<View style={styles.containerComment}>
-						<View style={styles.InputContainer}>
-        				  <TextInput
-        				    style={styles.body}
-        				    placeholder="E-mail or phone number"
-        				    onChangeText={text => this.setState({comment: text})}
-        				    value={this.state.comment}
-        				    // placeholderTextColor= "grey"
-        				    underlineColorAndroid="transparent"
-        				  />
-						  <TouchableOpacity style={styles.iconsend} onPress={() => this._AddComment()}>
-							  {iconSend}
-						  </TouchableOpacity>
-        				</View>
-					</View>
+					
 				</View>
 			</ScrollView>
 		);
@@ -279,7 +270,6 @@ Movie.propTypes = {
 };
 
 function mapStateToProps(state, ownProps) {
-	console.log(state.movies.details,'movies detail');
 	return {
 		details: state.movies.details,
 		similarMovies: state.movies.similarMovies,
