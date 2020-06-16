@@ -40,6 +40,12 @@ const styles = StyleSheet.create({
 		// borderStyle: "solid",
 		// borderColor: "grey",
 		// borderRadius: 25,
+		position: 'relative'
+	},
+	InputContainer1 : {
+		flex: 1,
+		flexDirection: 'row',
+		position: 'relative',
 	},
 	avatar: {
 		height: 40,
@@ -47,17 +53,38 @@ const styles = StyleSheet.create({
 		borderRadius:50,
 		backgroundColor: 'black',
 		marginLeft: 10,
-		flexBasis: 20
+		marginRight: 7
+	},
+	viewContent: {
+		flex: 1,
+		flexDirection: 'column',
+	},
+	avatar1: {
+		height: 40,
+		width: 40,
+		borderRadius:50,
+		backgroundColor: 'black',
+		marginLeft: 10,
+		marginRight: 10,
+		marginBottom: 10,
 	},
 	iconsend: {
 		// marginLeft:5,
-		// marginTop: 7,
+		marginTop: 7,
 		width: 40,
 		height: 40,
-		flexBasis: 20
+		position: 'absolute',
+		right: 0,
+		top: 0
+	},
+	iconLike: {
+		marginRight: 30,
+		marginLeft: 5,
 	},
 	containerComment: {
-		alignItems: "center"
+		alignItems: 'flex-start',
+		marginRight: 10,
+		marginTop: 10
 	},
 	body: {
 		height: 40,
@@ -68,9 +95,8 @@ const styles = StyleSheet.create({
 		borderColor: "grey",
 		borderRadius: 25,
 		paddingLeft: 20,
-		paddingRight: 20,
-		color: "#696969",
-		flexBasis: 60
+		paddingRight: 50,
+		color: "#696969"
 	},
 	comment1: {
 		color: 'white',

@@ -16,6 +16,9 @@ import LinearGradient from 'react-native-linear-gradient';
 import firebaseConfig from '../_global/firebase/firebaseApp';
 import ImagePicker from 'react-native-image-picker';
 import RNFetchBlob from 'react-native-fetch-blob';
+import {GetCurrentUser} from '../../action/GetUser';
+import { bindActionCreators } from 'redux';
+import { connect } from 'react-redux';
 import styles from './styles/Drawer';
 import 'firebase/firestore';
 import firebase from 'firebase';
@@ -87,7 +90,7 @@ class Drawer extends Component {
 				}
 			  })
 	}
-	uploadAvatar = (uri, imagename) => {
+	uploadAvatar = async (uri, imagename) => {
 		console.warn("Yüklemeye giren:"+uri);
 		
 		const image=uri;
@@ -116,13 +119,15 @@ class Drawer extends Component {
 		  .then((url) => {
 			// URL of the image uploaded on Firebase storage
 			console.warn(url);   
-			firebase.database().ref('users/'+ this.state.userID).update({avatar: url})
-			firebase.auth().currentUser.updateProfile({photoURL: url});
+			firebase.database().ref('users/'+ this.state.userID).update({avatar: url}).then(()=>{
+				console.log('update avatar thanh cong')
+			}).catch(err=>console.log(err))
 			this.setState({avatarSource: url})     
 		  })
 		  .catch((error) => {
 			console.log(error);
-		  })  
+		  })
+		  
 	}
 
 	_goToMovies() {
@@ -146,7 +151,6 @@ class Drawer extends Component {
 			animated: true
 		});
 	}
-
 	_changeAvatar = (userID) => {
 		ImagePicker.showImagePicker(options,(response) => {
 			console.log('Response = ', response);
@@ -160,12 +164,7 @@ class Drawer extends Component {
 			  console.log('User tapped custom button: ', response.customButton);
 			} else {
 			  const source = { uri: response.uri };
-			  this.uploadAvatar(response.uri,response.fileName)
-			//   .then((url) => {
-			// 	  console.log('this is url sau khi upload', url)
-			// 	// firebase.database().ref('users/'+ userID).update({avatar: url})
-			// 	this.setState({avatarSource: url});
-			//   }).catch((err) => console.log(err,'error upload image'))
+			  this.uploadAvatar(response.uri,response.fileName )
 			}
 		  })
 	}
@@ -338,5 +337,15 @@ class Drawer extends Component {
 Drawer.propTypes = {
 	navigator: PropTypes.object
 };
+function mapStateToProps(state, ownProps) {
+	return {
+		CurrentUser: state.LoadUser
+	};
+}
 
-export default Drawer;
+function mapDispatchToProps(dispatch) {
+	return {
+		GetCurrentUser: bindActionCreators(GetCurrentUser,dispatch),
+	};
+}
+export default connect(mapStateToProps, mapDispatchToProps)(Drawer);
