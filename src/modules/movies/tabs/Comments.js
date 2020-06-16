@@ -59,16 +59,16 @@ class Comments extends Component {
             console.log('okeee bang nhau')
             return (
                 <TouchableOpacity style={styles.iconLike}>
-                      {iconLike} 
-                      <Text style={{color: 'white', fontSize: 13, marginBottom: 3}}>da like</Text>
+                      <Like name="like" size={18} color="blue" />
+                      {/* <Text style={{color: 'blue', fontSize: 13, marginBottom: 3}}>da like</Text> */}
                 </TouchableOpacity>
             )
         }
         else {
             return (
                 <TouchableOpacity style={styles.iconLike} onPress={()=>this._AddCountLike(this.props.info.id,item.commentID)}>
-                      {iconLike}
-                      <Text style={{color: 'white', fontSize: 13, marginBottom: 3}}>chua like</Text>
+                      <Like name="like" size={18} color="white" />
+                      {/* <Text style={{color: 'white', fontSize: 13, marginBottom: 3}}>chua like</Text> */}
                 </TouchableOpacity>
             )
         }
