@@ -46,6 +46,7 @@ const styles = StyleSheet.create({
 		flex: 1,
 		flexDirection: 'row',
 		position: 'relative',
+		marginRight: 10
 	},
 	avatar: {
 		height: 40,
@@ -78,7 +79,7 @@ const styles = StyleSheet.create({
 		top: 0
 	},
 	iconLike: {
-		marginRight: 30,
+		marginRight: 5,
 		marginLeft: 5,
 	},
 	containerComment: {
