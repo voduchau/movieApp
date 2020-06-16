@@ -42,6 +42,11 @@ const styles = StyleSheet.create({
 		// borderRadius: 25,
 		position: 'relative'
 	},
+	InputContainer1 : {
+		flex: 1,
+		flexDirection: 'row',
+		position: 'relative',
+	},
 	avatar: {
 		height: 40,
 		width: 40,
@@ -49,6 +54,19 @@ const styles = StyleSheet.create({
 		backgroundColor: 'black',
 		marginLeft: 10,
 		marginRight: 7
+	},
+	viewContent: {
+		flex: 1,
+		flexDirection: 'column',
+	},
+	avatar1: {
+		height: 40,
+		width: 40,
+		borderRadius:50,
+		backgroundColor: 'black',
+		marginLeft: 10,
+		marginRight: 10,
+		marginBottom: 10,
 	},
 	iconsend: {
 		// marginLeft:5,
@@ -59,9 +77,14 @@ const styles = StyleSheet.create({
 		right: 0,
 		top: 0
 	},
+	iconLike: {
+		marginRight: 30,
+		marginLeft: 5,
+	},
 	containerComment: {
 		alignItems: 'flex-start',
-		marginRight: 10
+		marginRight: 10,
+		marginTop: 10
 	},
 	body: {
 		height: 40,
