@@ -43,24 +43,50 @@ class Comments extends Component {
             commentID: commentID
         }).then(() => {
             firebase.database().ref('likes/').orderByChild('commentID').equalTo(commentID).on('value', (data) =>{
-                firebase.database().ref('comments/' + movieID + '/' + commentID).update({
-                    likeCount: Object.keys(data.val()).length
-                }).then(()=>{
-                    this.props.GetAllLikes(this.props.CurrentUser.userID);
-                    this.props.GetComments(this.props.info.id);
-                })
+                if(data.val()){
+                    firebase.database().ref('comments/' + movieID + '/' + commentID).update({
+                        likeCount: Object.keys(data.val()).length
+                    }).then(()=>{
+                        this.props.GetAllLikes(this.props.CurrentUser.userID);
+                        this.props.GetComments(this.props.info.id);
+                    })
+                }
+                else {
+                    firebase.database().ref('comments/' + movieID + '/' + commentID).update({
+                        likeCount: 0
+                    }).then(()=>{
+                        this.props.GetAllLikes(this.props.CurrentUser.userID);
+                        this.props.GetComments(this.props.info.id);
+                    })
+                }
+
             })
         })
 
         
     }
-    checkLike = (like,iconLike,item) => {
+    _UnLike = async (item,like) => {
+        await firebase.database().ref('likes/' + like.likeID).remove().then(()=>{
+            firebase.database().ref('comments/' + this.props.info.id + '/' + item.commentID).update({
+                likeCount: item.likeCount - 1
+            })
+        })
+        this.props.GetAllLikes(this.props.CurrentUser.userID);
+        this.props.GetComments(this.props.info.id);
+    }
+
+    checkLike = (like,item) => {
         if(like){
-            console.log('okeee bang nhau')
             return (
-                <TouchableOpacity style={styles.iconLike}>
+                <TouchableOpacity style={styles.iconLike} onPress={()=>this._UnLike(item,like)}>
                       <Like name="like" size={18} color="blue" />
-                      {/* <Text style={{color: 'blue', fontSize: 13, marginBottom: 3}}>da like</Text> */}
+                </TouchableOpacity>
+            )
+        }
+        else if(like == null){
+            return (
+                <TouchableOpacity style={styles.iconLike} onPress={()=>this._AddCountLike(this.props.info.id,item.commentID)}>
+                    <Like name="like" size={18} color="white" />
                 </TouchableOpacity>
             )
         }
@@ -68,7 +94,6 @@ class Comments extends Component {
             return (
                 <TouchableOpacity style={styles.iconLike} onPress={()=>this._AddCountLike(this.props.info.id,item.commentID)}>
                       <Like name="like" size={18} color="white" />
-                      {/* <Text style={{color: 'white', fontSize: 13, marginBottom: 3}}>chua like</Text> */}
                 </TouchableOpacity>
             )
         }
@@ -95,10 +120,10 @@ class Comments extends Component {
                                 {
                                     like = this.props.AllLikes.find(item1 => {
                                         return item1.commentID == item.commentID
-                                    }),
-                                    this.checkLike(like,iconLike,item)
+                                    }) ,
+                                    this.checkLike(like,item)
                                 }
-                                <Text style={{color: 'white', fontSize: 11, marginBottom: 10}}>{item.likeCount}</Text>
+                                <Text style={{color: 'white', fontSize: 12, marginBottom: 10, marginLeft: 8}}>{item.likeCount}</Text>
         				    </View>
                         )
                         }}
