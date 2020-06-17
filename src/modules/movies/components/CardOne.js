@@ -29,7 +29,7 @@ const CardOne = ({ info, viewMovie }) => (
 				<View style={styles.cardNumbers}>
 					<View style={styles.cardStar}>
 						{iconStar}
-						<Text style={styles.cardStarRatings}>8.9</Text>
+						<Text style={styles.cardStarRatings}>{info.vote_average}</Text>
 					</View>
 					<Text style={styles.cardRunningHours} />
 				</View>

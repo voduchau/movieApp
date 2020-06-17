@@ -6,6 +6,7 @@ import {
 	ScrollView,
 	Text,
 	ToastAndroid,
+	TouchableOpacity,
 	View,
 } from 'react-native';
 import Icon from 'react-native-vector-icons/Ionicons';
@@ -18,6 +19,7 @@ import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
 import {GetCurrentUser} from '../../action/GetUser';
 import {AddComent} from '../../action/AddComent';
+import {AddRating} from '../../action/AddRating';
 import * as moviesActions from './movies.actions';
 import Casts from './tabs/Casts';
 import DefaultTabBar from '../_global/scrollableTabView/DefaultTabBar';
@@ -161,9 +163,14 @@ class Movie extends Component {
 	_AddComment = () => {
 		this.props.AddComent(this.props.CurrentUser.userID,this.state.comment,this.props.details.id)
 	}
+	_handleRating = () => {
+		console.log('click rating movie')
+		this.props.AddRating(this.props.details.id)
+	}
 
 	render() {
 		const iconStar = <Icon name="md-star" size={16} color="#F5B642" />;
+		const iconStarOutline = <Icon name="md-star-outline" size={16} color="#F5B642" />;
 		const { details } = this.props;
 		const info = details;
 		const iconSend = <Send name="send" size={26} color="#9F9F9F" />;
@@ -224,10 +231,26 @@ class Movie extends Component {
 							<View style={styles.cardNumbers}>
 								<View style={styles.cardStar}>
 									{iconStar}
-									<Text style={styles.cardStarRatings}>8.9</Text>
+							<Text style={styles.cardStarRatings}>{info.vote_average}</Text>
 								</View>
 								<Text style={styles.cardRunningHours} />
 							</View>
+
+								<View style={styles.cardNumbers}>
+									<View style={styles.cardStar}>
+										<TouchableOpacity onPress={()=>this._handleRating1()}>
+											{iconStarOutline}
+										</TouchableOpacity>
+										<TouchableOpacity onPress={()=>this._handleRating2()}>
+											{iconStarOutline}
+										</TouchableOpacity>
+										<TouchableOpacity onPress={()=>this._handleRating3()}>
+											{iconStarOutline}
+										</TouchableOpacity>
+										<Text style={styles.cardStarRatings}>rate</Text>
+									</View>
+									<Text style={styles.cardRunningHours} />
+								</View>
 						</View>
 					</View>
 					<View style={styles.contentContainer}>
@@ -270,6 +293,7 @@ Movie.propTypes = {
 };
 
 function mapStateToProps(state, ownProps) {
+	console.log(state.movies.details,'movie details ');
 	return {
 		details: state.movies.details,
 		similarMovies: state.movies.similarMovies,
@@ -281,7 +305,8 @@ function mapDispatchToProps(dispatch) {
 	return {
 		actions: bindActionCreators(moviesActions, dispatch),
 		GetCurrentUser: bindActionCreators(GetCurrentUser,dispatch),
-		AddComent: bindActionCreators(AddComent,dispatch)
+		AddComent: bindActionCreators(AddComent,dispatch),
+		AddRating: bindActionCreators(AddRating, dispatch)
 	};
 }
 
