@@ -71,7 +71,7 @@ class Drawer extends Component {
 	componentDidMount = () => {
 		 firebase.auth().onAuthStateChanged((user) => {
 				if (user) {
-					console.log('user da login')
+					console.log(user,'user da login')
 				  // User is signed in.
 				firebase.database().ref('users/' + user.uid).once('value').then( (snapshot) => {
 					console.log(snapshot.val(),'lay userrrrrrrrrrr')
