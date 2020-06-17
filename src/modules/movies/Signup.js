@@ -26,17 +26,23 @@ class Signup extends Component {
     onRegister = async () => {
         this.setState({ error: ""})
         await firebase.auth().createUserWithEmailAndPassword(this.state.email, this.state.password).then(data => {
-          firebase.database().ref('users/' + data.user.uid).set({
-            email: this.state.email,
-            password: this.state.password,
-            fullname: this.state.fullname,
-            avatar: defaultAvatar
-          })
+          data.user.sendEmailVerification().then(()=> {
+            firebase.database().ref('users/' + data.user.uid).set({
+              email: this.state.email,
+              password: this.state.password,
+              fullname: this.state.fullname,
+              avatar: defaultAvatar,
+              emailVerified: data.user.emailVerified,
+            })
+      
+          }).catch((error) => {
+            console.log(error,'error when send email verification')
+          });
+          
         }).catch((err) => {
           console.log('lỗi sign up account')
           this.setState({ error: err.message})
         })
-
         if(this.state.error == ""){
           this.props.navigator.push({
             screen: 'movieapp.Login'

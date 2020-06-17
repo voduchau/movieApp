@@ -29,24 +29,41 @@ class Login extends Component {
     this.setState({isLoading: true})
    await firebase.auth().signInWithEmailAndPassword(this.state.email, this.state.password)
    .then(data => {
-     console.log(data,'login thanh cong')
      this.setState({isLoading: false});
-     Alert.alert(
-        'Login successful',
-        `Welcome ${data.user.email}`,
+     if(data.user.emailVerified === false) {
+      Alert.alert(
+        'your email Verified',
+        `Please check ${this.state.email}`,
         [
-          { text: 'OK', onPress: () => console.log('OK Pressed') }
+          { text: 'OK', onPress: () => firebase.auth().signOut()}
         ],
         { cancelable: false }
       );
-     this.props.navigator.popToRoot({
-       screen: 'movieapp.Movies',
+      
+     }
+     else {
+       firebase.database().ref('users/' + data.user.uid).update({
+        emailVerified: true
+       })
+        Alert.alert(
+          'Login successful',
+          `Welcome ${data.user.email}`,
+          [
+            { text: 'OK', onPress: () => console.log('OK Pressed') }
+          ],
+          { cancelable: false }
+        );
+        this.props.navigator.popToRoot({
+         screen: 'movieapp.Movies',
      })
+     }
+     
    })
    .catch((error) => {
       // Handle Errors here.
+      this.setState({isLoading: false})
       var errorMessage = error.message;
-      this.setState({ error: errorMessage });
+      this.setState({ error: "Invalid username or password..." });
     });
   }
   onPressFacebook = () => {
@@ -62,7 +79,7 @@ class Login extends Component {
       this.state.isLoading ? <View style={styles.progressBar}><ProgressBar /></View> :
       <View style={styles.container}>
         <Text style={[styles.title, styles.leftTitle]}>Sign In</Text>
-        <Text>
+        <Text style={{color: "red", fontSize: 19, alignItems: "center", textAlign: "center", fontStyle: "italic"}}>
           {this.state.error != "" ? this.state.error:null}
         </Text>
         <View style={styles.InputContainer}>
@@ -132,7 +149,7 @@ const styles = StyleSheet.create({
   title: {
     fontSize: 30,
     fontWeight: "bold",
-    color: "#ff5a66",
+    color: "#4267b2",
     marginTop: 20,
     marginBottom: 20
   },
