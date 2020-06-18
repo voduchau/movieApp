@@ -14,6 +14,7 @@ export function retrieveMoviesGenres() {
 	return function (dispatch) {
 		return axios.get(`${TMDB_URL}/genre/movie/list?api_key=${TMDB_API_KEY}`)
 		.then(res => {
+			console.log(res,'ressss')
 			dispatch(retrieveMoviesGenresSuccess(res));
 		})
 		.catch(error => {

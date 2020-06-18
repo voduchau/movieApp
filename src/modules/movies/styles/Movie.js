@@ -136,8 +136,10 @@ const styles = StyleSheet.create({
 	},
 	cardStarRatings: {
 		marginLeft: 5,
-		fontSize: 12,
-		color: 'white'
+		fontSize: 15,
+		color: 'white',
+		paddingBottom: 7,
+		marginBottom: 5
 	},
 	cardRunningHours: {
 		marginLeft: 5,
