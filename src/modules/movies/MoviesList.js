@@ -119,7 +119,7 @@ class MoviesList extends Component {
 			<ListView
 				style={styles.container}
 				enableEmptySections
-				onEndReached={type => this._retrieveNextPage(this.props.type)}
+				// onEndReached={type => this._retrieveNextPage(this.props.type)}
 				onEndReachedThreshold={1200}
 				dataSource={this.state.dataSource}
 				renderRow={rowData => <CardThree info={rowData} viewMovie={this._viewMovie} />}
