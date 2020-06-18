@@ -28,8 +28,15 @@ import ProgressBar from '../_global/ProgressBar';
 import Trailers from './tabs/Trailers';
 import Comments from './tabs/Comments';
 import styles from './styles/Movie';
+import firebase from 'firebase';
+import { Rating, AirbnbRating } from 'react-native-ratings';
+import firebaseConfig from '../_global/firebase/firebaseApp';
+import _ from 'lodash';
 import { TMDB_IMG_URL, YOUTUBE_API_KEY, YOUTUBE_URL } from '../../constants/api';
 
+if (!firebase.apps.length) {
+	firebase.initializeApp(firebaseConfig)
+  }
 class Movie extends Component {
 	constructor(props) {
 		super(props);
@@ -61,6 +68,18 @@ class Movie extends Component {
 	componentWillMount() {
 		this._retrieveDetails();
 		this.props.GetCurrentUser();
+	}
+	componentDidMount = () => {
+		console.log(this.props.movieId,'id firmmmmmmmmmmmmmm')
+		firebase.database().ref('rating/' + this.props.movieId).once('value', (data)=>{
+			const res = _.values(data.val());
+			let sum = 0;
+			res.forEach(item => {
+				sum += item.rating
+			})
+			const tb = sum/res.length;
+			console.log(tb,'tbbbbb');	
+		})
 	}
 
 	componentWillReceiveProps(nextProps) {
@@ -228,28 +247,26 @@ class Movie extends Component {
 									))
 								}
 							</View>
-							<View style={styles.cardNumbers}>
+							{/* <View style={styles.cardNumbers}>
 								<View style={styles.cardStar}>
 									{iconStar}
-							<Text style={styles.cardStarRatings}>{info.vote_average}</Text>
+									<Text style={styles.cardStarRatings}>{info.vote_average}</Text>
 								</View>
 								<Text style={styles.cardRunningHours} />
-							</View>
+							</View> */}
 
 								<View style={styles.cardNumbers}>
-									<View style={styles.cardStar}>
-										<TouchableOpacity onPress={()=>this._handleRating1()}>
-											{iconStarOutline}
-										</TouchableOpacity>
-										<TouchableOpacity onPress={()=>this._handleRating2()}>
-											{iconStarOutline}
-										</TouchableOpacity>
-										<TouchableOpacity onPress={()=>this._handleRating3()}>
-											{iconStarOutline}
-										</TouchableOpacity>
-										<Text style={styles.cardStarRatings}>rate</Text>
-									</View>
-									<Text style={styles.cardRunningHours} />
+									{/* <View style={styles.cardStar}> */}
+										{/* <AirbnbRating
+										  showRating
+										  imageSize={15}
+										  reviews={[""]}
+										  size={10}
+										  reviewSize={15}
+										  style={{paddingVertical: 10, flexDirection: 'column', flex: 1}}
+										/> */}
+									{/* </View> */}
+									{/* <Text style={styles.cardRunningHours} /> */}
 								</View>
 						</View>
 					</View>

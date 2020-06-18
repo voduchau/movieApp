@@ -10,6 +10,7 @@ import {GetAllLikes} from '../../../action/GetAllLikes';
 import Send from 'react-native-vector-icons/MaterialCommunityIcons';
 import Like from 'react-native-vector-icons/SimpleLineIcons';
 import firebase from 'firebase';
+import { Rating, AirbnbRating } from 'react-native-ratings';
 import firebaseConfig from '../../_global/firebase/firebaseApp';
 import _ from 'lodash';
 if (!firebase.apps.length) {
@@ -98,6 +99,14 @@ class Comments extends Component {
             )
         }
     }
+
+    ratingCompleted = (rating) => {
+        console.log("Rating is: " + rating)
+        firebase.database().ref('rating/' + this.props.info.id + '/' + this.props.CurrentUser.userID).set({
+            rating: rating
+        })
+    }
+    
     render() {
         const iconSend = <Send name="send" size={26} color="#9F9F9F" />;
         const iconLike = <Like name="like" size={18} color="white" />
@@ -105,6 +114,16 @@ class Comments extends Component {
         let like;
         return (
             <View>
+                <Text style={{color:'white', fontSize: 18}}>Rate it:</Text>
+                <AirbnbRating
+				  showRating
+                  imageSize={20}
+                  defaultRating={0}
+				  reviews={["Rated: 1/5","Rated: 3/5","Rated: 3/5","Rated: 4/5","Rated: 5/5"]}
+				  size={15}
+				  reviewSize={20}
+				  onFinishRating={this.ratingCompleted}
+				/>
                 <Text style={styles.comment1}>Comments:</Text>
                     <FlatList
                         data={this.props.AllComments}
