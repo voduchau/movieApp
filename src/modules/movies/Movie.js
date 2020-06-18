@@ -19,7 +19,7 @@ import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
 import {GetCurrentUser} from '../../action/GetUser';
 import {AddComent} from '../../action/AddComent';
-import {AddRating} from '../../action/AddRating';
+import {GetRating} from '../../action/GetRating';
 import * as moviesActions from './movies.actions';
 import Casts from './tabs/Casts';
 import DefaultTabBar from '../_global/scrollableTabView/DefaultTabBar';
@@ -52,7 +52,8 @@ class Movie extends Component {
 			trailersTabHeight: null,
 			tab: 0,
 			youtubeVideos: [],
-			comment: ''
+			comment: '',
+			rating: 0,
 		};
 
 		this._getTabHeight = this._getTabHeight.bind(this);
@@ -70,16 +71,7 @@ class Movie extends Component {
 		this.props.GetCurrentUser();
 	}
 	componentDidMount = () => {
-		console.log(this.props.movieId,'id firmmmmmmmmmmmmmm')
-		firebase.database().ref('rating/' + this.props.movieId).once('value', (data)=>{
-			const res = _.values(data.val());
-			let sum = 0;
-			res.forEach(item => {
-				sum += item.rating
-			})
-			const tb = sum/res.length;
-			console.log(tb,'tbbbbb');	
-		})
+		this.props.GetRating(this.props.movieId);
 	}
 
 	componentWillReceiveProps(nextProps) {
@@ -179,14 +171,27 @@ class Movie extends Component {
 			}
 		}
 	}
+
 	_AddComment = () => {
 		this.props.AddComent(this.props.CurrentUser.userID,this.state.comment,this.props.details.id)
 	}
-	_handleRating = () => {
-		console.log('click rating movie')
-		this.props.AddRating(this.props.details.id)
-	}
 
+	showRating = () => {
+			return (
+				<View>
+				<Rating
+				  type="custom"
+				  showRating={false}
+				  tintColor='#120101'
+				  imageSize={20}
+				  startingValue={this.props.Rating}
+				  size={7}
+				  fractions={1}
+				/>
+				</View>
+			)
+
+	}
 	render() {
 		const iconStar = <Icon name="md-star" size={16} color="#F5B642" />;
 		const iconStarOutline = <Icon name="md-star-outline" size={16} color="#F5B642" />;
@@ -247,27 +252,13 @@ class Movie extends Component {
 									))
 								}
 							</View>
-							{/* <View style={styles.cardNumbers}>
+							<View style={styles.cardNumbers}>
 								<View style={styles.cardStar}>
-									{iconStar}
-									<Text style={styles.cardStarRatings}>{info.vote_average}</Text>
+										{this.showRating()}
+									<Text style={styles.cardStarRatings}>{this.props.Rating}</Text>
 								</View>
 								<Text style={styles.cardRunningHours} />
-							</View> */}
-
-								<View style={styles.cardNumbers}>
-									{/* <View style={styles.cardStar}> */}
-										{/* <AirbnbRating
-										  showRating
-										  imageSize={15}
-										  reviews={[""]}
-										  size={10}
-										  reviewSize={15}
-										  style={{paddingVertical: 10, flexDirection: 'column', flex: 1}}
-										/> */}
-									{/* </View> */}
-									{/* <Text style={styles.cardRunningHours} /> */}
-								</View>
+							</View>
 						</View>
 					</View>
 					<View style={styles.contentContainer}>
@@ -314,7 +305,8 @@ function mapStateToProps(state, ownProps) {
 	return {
 		details: state.movies.details,
 		similarMovies: state.movies.similarMovies,
-		CurrentUser: state.LoadUser
+		CurrentUser: state.LoadUser,
+		Rating: state.GetRating
 	};
 }
 
@@ -323,7 +315,7 @@ function mapDispatchToProps(dispatch) {
 		actions: bindActionCreators(moviesActions, dispatch),
 		GetCurrentUser: bindActionCreators(GetCurrentUser,dispatch),
 		AddComent: bindActionCreators(AddComent,dispatch),
-		AddRating: bindActionCreators(AddRating, dispatch)
+		GetRating: bindActionCreators(GetRating,dispatch)
 	};
 }
 

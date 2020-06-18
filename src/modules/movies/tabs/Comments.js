@@ -7,6 +7,7 @@ import {GetCurrentUser} from '../../../action/GetUser';
 import {AddComent} from '../../../action/AddComent';
 import {GetComments} from '../../../action/GetComments';
 import {GetAllLikes} from '../../../action/GetAllLikes';
+import {GetRating} from '../../../action/GetRating';
 import Send from 'react-native-vector-icons/MaterialCommunityIcons';
 import Like from 'react-native-vector-icons/SimpleLineIcons';
 import firebase from 'firebase';
@@ -104,6 +105,8 @@ class Comments extends Component {
         console.log("Rating is: " + rating)
         firebase.database().ref('rating/' + this.props.info.id + '/' + this.props.CurrentUser.userID).set({
             rating: rating
+        }).then(()=>{
+            this.props.GetRating(this.props.info.id)
         })
     }
     
@@ -119,7 +122,7 @@ class Comments extends Component {
 				  showRating
                   imageSize={20}
                   defaultRating={0}
-				  reviews={["Rated: 1/5","Rated: 3/5","Rated: 3/5","Rated: 4/5","Rated: 5/5"]}
+				  reviews={["Rated: 1/5","Rated: 2/5","Rated: 3/5","Rated: 4/5","Rated: 5/5"]}
 				  size={15}
 				  reviewSize={20}
 				  onFinishRating={this.ratingCompleted}
@@ -184,7 +187,8 @@ function mapDispatchToProps(dispatch) {
         AddComent: bindActionCreators(AddComent,dispatch),
         GetCurrentUser: bindActionCreators(GetCurrentUser,dispatch),
         GetComments: bindActionCreators(GetComments,dispatch),
-        GetAllLikes: bindActionCreators(GetAllLikes,dispatch)
+        GetAllLikes: bindActionCreators(GetAllLikes,dispatch),
+        GetRating: bindActionCreators(GetRating,dispatch)
 	};
 }
 export default connect(mapStateToProps, mapDispatchToProps)(Comments);
