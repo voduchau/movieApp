@@ -18,7 +18,7 @@
     "eslint-plugin-react-native": "^2.0.0",
     "eslint-watch": "2.1.14",
     "firebase": "7.1.0",
-    "lodash": "^4.16.6",
+    "lodash": "^4.17.13",
     "moment": "^2.16.0",
     "numeral": "^1.5.3",
     "react": "16.0.0-alpha.6",
