@@ -274,7 +274,7 @@ class Movie extends Component {
 							<Info tabLabel="INFO" info={info} />
 							<Casts tabLabel="CASTS" info={info} getTabHeight={this._getTabHeight} />
 							<Trailers tabLabel="TRAILERS" youtubeVideos={this.state.youtubeVideos} openYoutube={this._openYoutube} getTabHeight={this._getTabHeight} />
-							<Comments tabLabel="COMMENTS" info={info}/>
+							<Comments tabLabel="COMMENTS" rating={this.props.Rating} info={info}/>
 						</ScrollableTabView>
 					</View>
 					

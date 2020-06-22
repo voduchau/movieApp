@@ -16,6 +16,13 @@ const styles = StyleSheet.create({
 		height: 90,
 		borderRadius: 3
 	},
+	backgroundVideo: {
+		position: 'absolute',
+		top: 0,
+		left: 0,
+		bottom: 0,
+		right: 0,
+	},
 	title: {
 		flex: 1,
 		color: 'white',

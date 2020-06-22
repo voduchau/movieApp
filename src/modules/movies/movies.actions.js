@@ -50,7 +50,7 @@ export const retrievePopularMoviesSuccess = (res) => {
 	
 }
 
-export function retrievePopularMovies(page) {
+export const retrievePopularMovies = (page) => {
 	// return function (dispatch) {
 	// 	return axios.get(`${TMDB_URL}/movie/popular?api_key=${TMDB_API_KEY}&page=${page}`)
 	// 	.then(res => {
@@ -60,8 +60,8 @@ export function retrievePopularMovies(page) {
 	// 		console.log('Popular', error); //eslint-disable-line
 	// 	});
 	// };
-	return (dispatch) => {
-		firebase.database().ref('/movies/popular').once('value',(data) =>{
+	return async (dispatch) => {
+		await firebase.database().ref('/movies/popular').once('value',(data) =>{
 				dispatch({
 					type: types.RETRIEVE_POPULAR_MOVIES_SUCCESS,
 					popularMovies: data.val()
@@ -71,7 +71,7 @@ export function retrievePopularMovies(page) {
 }
 
 // NOW PLAYING - OK
-export function retrieveNowPlayingMoviesSuccess(res) {
+export const retrieveNowPlayingMoviesSuccess = (res) => {
 	firebase.database().ref('/movies/now_playing').set(res.data)
 	return {
 		type: types.RETRIEVE_NOWPLAYING_MOVIES_SUCCESS,
@@ -79,18 +79,19 @@ export function retrieveNowPlayingMoviesSuccess(res) {
 	};
 }
 
-export function retrieveNowPlayingMovies(page) {
+export const retrieveNowPlayingMovies = (page) => {
 	// return function (dispatch) {
 	// 	return axios.get(`${TMDB_URL}/movie/now_playing?api_key=${TMDB_API_KEY}&page=${page}`)
 	// 	.then(res => {
+	// 		console.log(res.data,'112321312312312')
 	// 		dispatch(retrieveNowPlayingMoviesSuccess(res));
 	// 	})
 	// 	.catch(error => {
 	// 		console.log('Now Playing', error); //eslint-disable-line
 	// 	});
 	// };
-	return (dispatch) => {
-		firebase.database().ref('/movies/now_playing').once('value',(data) =>{
+	return async (dispatch) => {
+		await firebase.database().ref('/movies/now_playing').once('value',(data) =>{
 				dispatch({
 					type: types.RETRIEVE_NOWPLAYING_MOVIES_SUCCESS,
 					nowPlayingMovies: data.val()
@@ -102,33 +103,37 @@ export function retrieveNowPlayingMovies(page) {
 // MOVIES LIST - OK
 export function retrieveMoviesListSuccess(res) {
 	console.log(res,'alo 456')
+	// firebase.database().ref('movies/top_rated/').set(res.data)
 	return {
 		type: types.RETRIEVE_MOVIES_LIST_SUCCESS,
-		list: res
+		list: {page: 1, results: res}
 	};
 }
-
-export function retrieveMoviesList(type, page) {
-	return function (dispatch) {
-		return firebase.database().ref('movies/' + type).once('value',(data) =>{
-			dispatch(retrieveMoviesListSuccess(data.val()));
+// sort top_rated
+const compare=( a, b ) =>{
+	if ( a.vote_average < b.vote_average ){
+	  return 1;
+	}
+	else{
+	  return -1;
+	}
+  }
+export const retrieveMoviesList = (type, page) => {
+	console.log(type,'this is type')
+	return  async (dispatch) => {
+		return await firebase.database().ref('movies/all').child('results').orderByChild('vote_average').once('value',(data) =>{
+			dispatch(retrieveMoviesListSuccess(data.val().sort(compare)));
 		})
-		// .then(res => {
-		// 	dispatch(retrieveMoviesListSuccess(res));
-		// })
-		// .catch(error => {
-		// 	console.log('Movies List', error); //eslint-disable-line
-		// });
 	};
-	// return (dispatch) => {
-	// 	firebase.database().ref('/movies/' + type).once('value',(data) =>{
-	// 		console.log(data.val(),'alo 123');
-	// 			// dispatch({
-	// 			// 	type: types.RETRIEVE_MOVIES_LIST_SUCCESS,
-	// 			// 	list: data.val()
-	// 			// })
-	// 		})
-	// }
+	// return function (dispatch) {
+	// 	return axios.get(`${TMDB_URL}/movie/${type}?api_key=${TMDB_API_KEY}&page=${page}`)
+	// 	.then(res => {
+	// 		dispatch(retrieveMoviesListSuccess(res));
+	// 	})
+	// 	.catch(error => {
+	// 		console.log('Movies List', error); //eslint-disable-line
+	// 	});
+	// };
 	
 }
 
@@ -141,7 +146,7 @@ export function retrieveMoviesSearchResultsSuccess(res) {
 }
 
 export function retrieveMoviesSearchResults(query, page) {
-	return function (dispatch) {
+	return (dispatch) => {
 		return axios.get(`${TMDB_URL}/search/movie?api_key=${TMDB_API_KEY}&query=${query}&page=${page}`)
 		.then(res => {
 			dispatch(retrieveMoviesSearchResultsSuccess(res));
@@ -154,27 +159,39 @@ export function retrieveMoviesSearchResults(query, page) {
 
 // MOVIE DETAILS
 export function retrieveMovieDetailsSuccess(res) {
-	// console.log(res,'moive detailsssssssssss alo 123')
-	// firebase.database().ref('movies/all/' + res.data.id).set(res.data)
+	// get all = now_playing + popular
+	firebase.database().ref('/movies/now_playing').once('value',(data1) =>{
+		firebase.database().ref('/movies/popular').once('value',(data2)=>{
+			let now = data1.val()
+			let pop = data2.val()
+			let rs1 = data1.val().results
+			let rs2 = data2.val().results
+			rs2.map(item => {
+				rs1.push(item)
+			})
+			// console.log({...now,results:rs1},'this is rs1111111111111111111111111111')
+			firebase.database().ref('/movies/all').set({...now,results:rs1})
+		})
+	})
 	return {
 		type: types.RETRIEVE_MOVIE_DETAILS_SUCCESS,
-		details: res
+		details: res.data
 	};
 }
 
 export function retrieveMovieDetails(movieId) {
-	return function (dispatch) {
-		return firebase.database().ref('movies/all/' + movieId).once('value',(data)=>{
-			dispatch(retrieveMovieDetailsSuccess(data.val()));
-		})
-	};
 	// return function (dispatch) {
-	// 	return axios.get(`${TMDB_URL}/movie/${movieId}?api_key=${TMDB_API_KEY}&append_to_response=casts,images,videos`)
-	// 	.then(res => {
-	// 		dispatch(retrieveMovieDetailsSuccess(res));
+	// 	return firebase.database().ref('movies/all/' + movieId).once('value',(data)=>{
+	// 		dispatch(retrieveMovieDetailsSuccess(data.val()));
 	// 	})
-	// 	.catch(error => {
-	// 		console.log('Movie Details', error); //eslint-disable-line
-	// 	});
 	// };
+	return function (dispatch) {
+		return axios.get(`${TMDB_URL}/movie/${movieId}?api_key=${TMDB_API_KEY}&append_to_response=casts,images,videos`)
+		.then(res => {
+			dispatch(retrieveMovieDetailsSuccess(res));
+		})
+		.catch(error => {
+			console.log('Movie Details', error); //eslint-disable-line
+		});
+	};
 }
