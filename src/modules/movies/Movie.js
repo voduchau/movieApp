@@ -203,7 +203,7 @@ class Movie extends Component {
 		if (this.state.tab === 1) height = this.state.castsTabHeight;
 		if (this.state.tab === 2) height = this.state.trailersTabHeight;
 		if (this.state.tab === 3) height = this.state.commentsTabHeight;
-
+		console.log(info,'info detail')
 		return (
 			this.state.isLoading ? <View style={styles.progressBar}><ProgressBar /></View> :
 			<ScrollView
@@ -232,24 +232,25 @@ class Movie extends Component {
 						loop
 						index={5}>
 						{
-							info.images.backdrops.map((item, index) => (
+							info.images ? info.images.backdrops.map((item, index) => (
 								<View key={index}>
 									<Image source={{ uri: `${TMDB_IMG_URL}/w780/${(item.file_path)}` }} style={styles.imageBackdrop} />
 									<LinearGradient colors={['rgba(0, 0, 0, 0.2)', 'rgba(0,0,0, 0.2)', 'rgba(0,0,0, 0.7)']} style={styles.linearGradient} />
 								</View>
-							))
+							)) : null
 						}
 					</Swiper>
 					<View style={styles.cardContainer}>
 						<Image source={{ uri: `${TMDB_IMG_URL}/w185/${info.poster_path}` }} style={styles.cardImage} />
 						<View style={styles.cardDetails}>
-							<Text style={styles.cardTitle}>{info.original_title}</Text>
-							<Text style={styles.cardTagline}>{info.tagline}</Text>
+							<Text style={styles.cardTitle}>{info ? info.original_title : null}</Text>
+							<Text style={styles.cardTagline}>{info? info.tagline: null}</Text>
 							<View style={styles.cardGenre}>
 								{
-									info.genres.map(item => (
+									info && info.genres ? info.genres.map(item => {
+										// console.log(item,'item x123');
 										<Text key={item.id} style={styles.cardGenreItem}>{item.name}</Text>
-									))
+									}):null
 								}
 							</View>
 							<View style={styles.cardNumbers}>

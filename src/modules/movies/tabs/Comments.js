@@ -12,6 +12,7 @@ import {AddTopRate} from '../../../action/AddTopRate';
 import Send from 'react-native-vector-icons/MaterialCommunityIcons';
 import Like from 'react-native-vector-icons/SimpleLineIcons';
 import firebase from 'firebase';
+import Video from 'react-native-video';
 import { Rating, AirbnbRating } from 'react-native-ratings';
 import firebaseConfig from '../../_global/firebase/firebaseApp';
 import _ from 'lodash';
@@ -120,6 +121,14 @@ class Comments extends Component {
         let like;
         return (
             <View>
+                <Video style={{borderColor:'red', borderWidth:2}} source={{uri: "https://youtu.be/vji86f3rBSI"}}
+								ref={(ref) => {
+									this.player = ref
+								  }}                                      // Store reference
+								  onBuffer={this.onBuffer}                // Callback when remote video is buffering
+								  onError={this.videoError}               // Callback when video cannot be loaded
+								  style={styles.backgroundVideo}
+							/>
                 <Text style={{color:'white', fontSize: 18}}>Rate it:</Text>
                 <AirbnbRating
 				  showRating
