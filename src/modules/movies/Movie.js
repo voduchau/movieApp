@@ -22,6 +22,7 @@ import {AddComent} from '../../action/AddComent';
 import {GetRating} from '../../action/GetRating';
 import * as moviesActions from './movies.actions';
 import Casts from './tabs/Casts';
+import CardTwo from './components/CardTwo'
 import DefaultTabBar from '../_global/scrollableTabView/DefaultTabBar';
 import Info from './tabs/Info';
 import ProgressBar from '../_global/ProgressBar';
@@ -315,7 +316,26 @@ class Movie extends Component {
 							<Comments tabLabel="COMMENTS" rating={this.props.Rating} info={info}/>
 						</ScrollableTabView>
 					</View>
-					
+					{/* begin recomend */}
+					<View>
+						<View style={styles.listHeading}>
+							<Text style={styles.listHeadingLeft}>Recomend for you</Text>
+							<TouchableOpacity>
+								<Text
+									style={styles.listHeadingRight}
+									// onPress={this._viewMoviesList.bind(this, 'popular', 'Popular')}
+								>
+									{/* See all */}
+								</Text>
+							</TouchableOpacity>
+						</View>
+						<ScrollView horizontal showsHorizontalScrollIndicator={false}>
+							{ !_.isEmpty(this.props.recomment) && this.props.recomment.map(info => (
+								<CardTwo key={info.id} info={info} viewMovie={this._viewMovie} />
+							))}
+						</ScrollView>
+					</View>
+					{/* end recommend */}
 				</View>
 			</ScrollView>
 		);
@@ -339,11 +359,13 @@ Movie.propTypes = {
 };
 
 function mapStateToProps(state, ownProps) {
+	console.log(state.movies.recomment,'?????')
 	return {
 		details: state.movies.details,
 		similarMovies: state.movies.similarMovies,
 		CurrentUser: state.LoadUser,
-		Rating: state.GetRating
+		Rating: state.GetRating,
+		recomment: state.movies.recomment
 	};
 }
 
