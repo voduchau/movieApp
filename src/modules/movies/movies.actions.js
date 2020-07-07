@@ -120,11 +120,35 @@ const compare=( a, b ) =>{
   }
 export const retrieveMoviesList = (type, page) => {
 	console.log(type,'this is type')
-	return  async (dispatch) => {
-		return await firebase.database().ref('movies/all').child('results').orderByChild('vote_average').once('value',(data) =>{
-			dispatch(retrieveMoviesListSuccess(data.val().sort(compare)));
-		})
-	};
+	if(type ==='top_rated'){
+		return  async (dispatch) => {
+			return await firebase.database().ref('movies/all').child('results').orderByChild('vote_average').once('value',(data) =>{
+				dispatch(retrieveMoviesListSuccess(data.val().sort(compare)));
+			})
+		};
+	}
+	if(type === 'upcoming'){
+		return async function (dispatch) {
+			await axios.get(`${TMDB_URL}/movie/upcoming?api_key=${TMDB_API_KEY}`)
+			   .then(res => {
+				   dispatch({
+					   type: types.RETRIEVE_MOVIES_LIST_SUCCESS,
+					   list: res.data
+				   });
+			   })
+			   .catch(error => {
+				   console.log('upcoming error: ', error); //eslint-disable-line
+			   });
+	   };
+	}
+	if(type === 'now_playing'){
+		return  async (dispatch) => {
+			return await firebase.database().ref('movies/now_playing').child('results') .once('value',(data) =>{
+				console.log(data.val().sort(compare),'now playing')
+				dispatch(retrieveMoviesListSuccess(data.val().sort(compare)));
+			})
+		};
+	}
 	// return function (dispatch) {
 	// 	return axios.get(`${TMDB_URL}/movie/${type}?api_key=${TMDB_API_KEY}&page=${page}`)
 	// 	.then(res => {
@@ -134,7 +158,6 @@ export const retrieveMoviesList = (type, page) => {
 	// 		console.log('Movies List', error); //eslint-disable-line
 	// 	});
 	// };
-	
 }
 
 // SEARCH RESULTS
@@ -193,12 +216,12 @@ export function retrieveMovieDetails(movieId) {
 				dispatch(retrieveMovieDetailsSuccess(res));
 			})
 			.catch(error => {
-				console.log('vap 33333 lỗi')
 				console.log('Movie Details', error); //eslint-disable-line
 			});
 	};
 }
 
+// recomend
 export function getRecommendMovie (genres) {
 	if(genres){
 		const category = genres.map(a => a.id)
@@ -221,6 +244,22 @@ export function getRecommendMovie (genres) {
 				type: 'GET_RECOMMEND',
 				payload: []
 			})
-		} )
+		})
 	}
+}
+
+// get upcoming
+export function upcoming() {
+	return async function (dispatch) {
+		 await axios.get(`${TMDB_URL}/movie/upcoming?api_key=${TMDB_API_KEY}`)
+			.then(res => {
+				dispatch({
+					type: 'UPCOMING',
+					payload: res.data
+				});
+			})
+			.catch(error => {
+				console.log('upcoming error: ', error); //eslint-disable-line
+			});
+	};
 }

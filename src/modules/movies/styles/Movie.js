@@ -165,9 +165,12 @@ const styles = StyleSheet.create({
 				fontSize: 15
 			},
 			android: {
-				fontSize: 16
+				fontSize: 13,
+				marginLeft: 5,
+				paddingLeft: 5
 			}
-		})
+		}),
+		marginLeft: 3
 	},
 });
 

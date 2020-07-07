@@ -27,6 +27,7 @@ import DefaultTabBar from '../_global/scrollableTabView/DefaultTabBar';
 import Info from './tabs/Info';
 import ProgressBar from '../_global/ProgressBar';
 import Trailers from './tabs/Trailers';
+import rcmdemo from './rcmdemo';
 import Comments from './tabs/Comments';
 import styles from './styles/Movie';
 import firebase from 'firebase';
@@ -242,6 +243,8 @@ class Movie extends Component {
 		if (this.state.tab === 1) height = this.state.castsTabHeight;
 		if (this.state.tab === 2) height = this.state.trailersTabHeight;
 		if (this.state.tab === 3) height = this.state.commentsTabHeight;
+		const rcm = _.isEmpty(this.props.recomment) ? rcmdemo : this.props.recomment.slice(0,4);
+		const genres2 = _.isEmpty(details) ? ['thief']: details.genres.slice(0,3)
 		return (
 			this.state.isLoading ? <View style={styles.progressBar}><ProgressBar /></View> :
 			<ScrollView
@@ -325,12 +328,14 @@ class Movie extends Component {
 									style={styles.listHeadingRight}
 									// onPress={this._viewMoviesList.bind(this, 'popular', 'Popular')}
 								>
-									{/* See all */}
+									{genres2.map(item => (
+										<Text>{item.name}.</Text>
+									))}
 								</Text>
 							</TouchableOpacity>
 						</View>
 						<ScrollView horizontal showsHorizontalScrollIndicator={false}>
-							{ !_.isEmpty(this.props.recomment) && this.props.recomment.map(info => (
+							{ !_.isEmpty(rcm) && rcm.map((info,index) => (
 								<CardTwo key={info.id} info={info} viewMovie={this._viewMovie} />
 							))}
 						</ScrollView>
