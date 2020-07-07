@@ -160,19 +160,20 @@ export function retrieveMoviesSearchResults(query, page) {
 // MOVIE DETAILS
 export function retrieveMovieDetailsSuccess(res) {
 	// get all = now_playing + popular
-	firebase.database().ref('/movies/now_playing').once('value',(data1) =>{
-		firebase.database().ref('/movies/popular').once('value',(data2)=>{
-			let now = data1.val()
-			let pop = data2.val()
-			let rs1 = data1.val().results
-			let rs2 = data2.val().results
-			rs2.map(item => {
-				rs1.push(item)
-			})
-			// console.log({...now,results:rs1},'this is rs1111111111111111111111111111')
-			firebase.database().ref('/movies/all').set({...now,results:rs1})
-		})
-	})
+	// firebase.database().ref('/movies/now_playing').once('value',(data1) =>{
+	// 	firebase.database().ref('/movies/popular').once('value',(data2)=>{
+	// 		let now = data1.val()
+	// 		let pop = data2.val()
+	// 		let rs1 = data1.val().results
+	// 		let rs2 = data2.val().results
+	// 		rs2.map(item => {
+	// 			rs1.push(item)
+	// 		})
+	// 		// console.log({...now,results:rs1},'this is rs1111111111111111111111111111')
+	// 		firebase.database().ref('/movies/all').set({...now,results:rs1})
+	// 	})
+	// })
+	console.log(res,'res thì sao')
 	return {
 		type: types.RETRIEVE_MOVIE_DETAILS_SUCCESS,
 		details: res.data
@@ -181,17 +182,45 @@ export function retrieveMovieDetailsSuccess(res) {
 
 export function retrieveMovieDetails(movieId) {
 	// return function (dispatch) {
-	// 	return firebase.database().ref('movies/all/' + movieId).once('value',(data)=>{
+	// 	return firebase.database().ref('movies/all/results').once('value',(data)=>{
 	// 		dispatch(retrieveMovieDetailsSuccess(data.val()));
 	// 	})
 	// };
-	return function (dispatch) {
-		return axios.get(`${TMDB_URL}/movie/${movieId}?api_key=${TMDB_API_KEY}&append_to_response=casts,images,videos`)
-		.then(res => {
-			dispatch(retrieveMovieDetailsSuccess(res));
-		})
-		.catch(error => {
-			console.log('Movie Details', error); //eslint-disable-line
-		});
+	return async function (dispatch) {
+		 await axios.get(`${TMDB_URL}/movie/${movieId}?api_key=${TMDB_API_KEY}&append_to_response=casts,images,videos`)
+			.then(res => {
+				console.log(res,'k lẽ')
+				dispatch(retrieveMovieDetailsSuccess(res));
+			})
+			.catch(error => {
+				console.log('vap 33333 lỗi')
+				console.log('Movie Details', error); //eslint-disable-line
+			});
 	};
+}
+
+export function getRecommendMovie (genres) {
+	if(genres){
+		const category = genres.map(a => a.id)
+		return function (dispatch) {
+			return firebase.database().ref('movies/all/results').once('value', (data) => {
+				const res = data.val().filter(item =>
+					 item.genre_ids.some(r=> category.indexOf(r) >= 0)
+				)
+				dispatch({
+					type: 'GET_RECOMMEND',
+					payload: res
+				})
+			} )
+		}
+	}
+	// const category =  genres.map(a => a.id);
+	return function (dispatch) {
+		return firebase.database().ref('movies/all/results').once('value', (data) => {
+			dispatch({
+				type: 'GET_RECOMMEND',
+				payload: []
+			})
+		} )
+	}
 }
