@@ -85,7 +85,8 @@ const styles = StyleSheet.create({
 	containerComment: {
 		alignItems: 'flex-start',
 		marginRight: 10,
-		marginTop: 10
+		marginBottom:10,
+
 	},
 	body: {
 		height: 40,

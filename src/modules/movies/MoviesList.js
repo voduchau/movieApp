@@ -39,7 +39,9 @@ class MoviesList extends Component {
 	}
 
 	_retrieveMoviesList(isRefreshed) {
-		this.props.actions.retrieveMoviesList(this.props.type, this.state.currentPage)
+		//upcoming
+		// top_rated
+			this.props.actions.retrieveMoviesList(this.props.type, this.state.currentPage)
 			.then(() => {
 				const ds = new ListView.DataSource({ rowHasChanged: (row1, row2) => row1 !== row2 });
 				const dataSource = ds.cloneWithRows(this.props.list.results);
@@ -170,8 +172,10 @@ MoviesList.navigatorStyle = {
 };
 
 function mapStateToProps(state, ownProps) {
+	console.log(state.movies.list,'listtt')
 	return {
-		list: state.movies.list
+		list: state.movies.list,
+		upcoming: state.movies.upcoming
 	};
 }
 

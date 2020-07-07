@@ -1,5 +1,5 @@
 import React, { Component, PropTypes } from 'react';
-import {View, Text, TextInput, TouchableOpacity, FlatList, Image} from 'react-native';
+import {View, Text, TextInput, TouchableOpacity, FlatList, Alert, Image, ScrollView} from 'react-native';
 import styles from './styles/Comments';
 import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
@@ -16,6 +16,7 @@ import Video from 'react-native-video';
 import { Rating, AirbnbRating } from 'react-native-ratings';
 import firebaseConfig from '../../_global/firebase/firebaseApp';
 import _ from 'lodash';
+import user from '../../../constants/images/user.png'
 if (!firebase.apps.length) {
 	firebase.initializeApp(firebaseConfig)
   }
@@ -27,6 +28,7 @@ class Comments extends Component {
 		this.state = {
             comment: '',
             likeStatus: false,
+            isLogin: false
         };
     }
     componentDidMount = () => {
@@ -82,25 +84,79 @@ class Comments extends Component {
 
     checkLike = (like,item) => {
         if(like){
-            return (
-                <TouchableOpacity style={styles.iconLike} onPress={()=>this._UnLike(item,like)}>
-                      <Like name="like" size={18} color="blue" />
-                </TouchableOpacity>
-            )
+            if(this.props.CurrentUser.userID){
+                return (
+                    <TouchableOpacity style={styles.iconLike} onPress={()=>this._UnLike(item,like)}>
+                          <Like name="like" size={18} color="blue" />
+                    </TouchableOpacity>
+                )  
+            }
+            else {
+                return (
+                    <TouchableOpacity style={styles.iconLike} onPress={()=>{
+                        Alert.alert(
+                            'You are not logged in',
+                            `Please Login before comment`,
+                            [
+                              { text: 'OK', onPress: () => console.log('click ok')}
+                            ],
+                            { cancelable: false }
+                          );
+                    }}>
+                          <Like name="like" size={18} color="blue" />
+                    </TouchableOpacity>
+                )
+            }
         }
         else if(like == null){
-            return (
-                <TouchableOpacity style={styles.iconLike} onPress={()=>this._AddCountLike(this.props.info.id,item.commentID)}>
-                    <Like name="like" size={18} color="white" />
-                </TouchableOpacity>
-            )
+            if(this.props.CurrentUser.userID){
+                return (
+                    <TouchableOpacity style={styles.iconLike} onPress={()=>this._AddCountLike(this.props.info.id,item.commentID)}>
+                        <Like name="like" size={18} color="white" />
+                    </TouchableOpacity>
+                )  
+            }
+            else {
+                return (
+                    <TouchableOpacity style={styles.iconLike} onPress={()=>{
+                        Alert.alert(
+                            'You are not logged in',
+                            `Please Login before comment`,
+                            [
+                              { text: 'OK', onPress: () => console.log('click ok')}
+                            ],
+                            { cancelable: false }
+                          );
+                    }}>
+                        <Like name="like" size={18} color="white" />
+                    </TouchableOpacity>
+                )
+            }
         }
         else {
-            return (
-                <TouchableOpacity style={styles.iconLike} onPress={()=>this._AddCountLike(this.props.info.id,item.commentID)}>
-                      <Like name="like" size={18} color="white" />
-                </TouchableOpacity>
-            )
+            if(this.props.CurrentUser.userID){
+                return (
+                    <TouchableOpacity style={styles.iconLike} onPress={()=>this._AddCountLike(this.props.info.id,item.commentID)}>
+                          <Like name="like" size={18} color="white" />
+                    </TouchableOpacity>
+                )
+            }
+            else {
+                return (
+                    <TouchableOpacity style={styles.iconLike} onPress={()=>{
+                        Alert.alert(
+                            'You are not logged in',
+                            `Please Login before comment`,
+                            [
+                              { text: 'OK', onPress: () => console.log('click ok')}
+                            ],
+                            { cancelable: false }
+                          );
+                    }}>
+                          <Like name="like" size={18} color="white" />
+                    </TouchableOpacity>
+                )
+            }
         }
     }
 
@@ -113,6 +169,61 @@ class Comments extends Component {
             // this.props.AddTopRate(this.props.info,this.props.rating)
         })
     }
+
+    ShowInputComment = (iconSend) => {
+        if(this.props.CurrentUser.userID){
+            return (
+                <View style={styles.containerComment}>
+					<View style={styles.InputContainer}>
+                        <Image source={{ uri: this.props.CurrentUser.photoURL}} style={styles.avatar} />
+        			    <TextInput
+        			        style={styles.body}
+        			        placeholder="Add your comment"
+        			        onChangeText={text => this.setState({comment: text})}
+        			        value={this.state.comment}
+        			        // placeholderTextColor= "grey"
+        			        underlineColorAndroid="transparent"
+        			    />
+					    <TouchableOpacity style={styles.iconsend} onPress={() => this._AddComment()}>
+					    	  {iconSend}
+					    </TouchableOpacity>
+        			</View>
+				</View>
+            )
+        }
+        else {
+            return (
+                <View style={styles.containerComment}>
+					<View style={styles.InputContainer}>
+                        <Image source={user} style={styles.avatar} />
+        			    <TextInput
+        			        style={styles.body}
+        			        placeholder="Add your comment"
+        			        onChangeText={text => this.setState({comment: text})}
+        			        value={'Please Login before comment'}
+        			        placeholderTextColor= "white"
+                            underlineColorAndroid="transparent"
+                            editable={false} 
+                            selectTextOnFocus={false}
+        			    />
+					    <TouchableOpacity style={styles.iconsend} onPress={()=>{
+                            console.log('bạn chưa login')
+                            Alert.alert(
+                                'You are not logged in',
+                                `Please Login before comment`,
+                                [
+                                  { text: 'OK', onPress: () => console.log('click ok')}
+                                ],
+                                { cancelable: false }
+                              );
+                        }}>
+					    	  {iconSend}
+					    </TouchableOpacity>
+        			</View>
+				</View>
+            )
+        }
+    }
     
     render() {
         const iconSend = <Send name="send" size={26} color="#9F9F9F" />;
@@ -120,7 +231,7 @@ class Comments extends Component {
         // this.props.AddTopRate(this.props.info,this.props.rating)
         let like;
         return (
-            <View>
+            <View style={styles.container}>
                 <Video style={{borderColor:'red', borderWidth:2}} source={{uri: "https://youtu.be/vji86f3rBSI"}}
 								ref={(ref) => {
 									this.player = ref
@@ -140,6 +251,9 @@ class Comments extends Component {
 				  onFinishRating={this.ratingCompleted}
 				/>
                 <Text style={styles.comment1}>Comments:</Text>
+                <ScrollView
+                    style={{paddingTop: 10, paddingBottom: 10}}
+                >
                     <FlatList
                         data={this.props.AllComments}
                         keyExtractor={(item,index) => index}
@@ -162,30 +276,16 @@ class Comments extends Component {
                         )
                         }}
                     />
-					<View style={styles.containerComment}>
-						<View style={styles.InputContainer}>
-                            <Image source={{ uri: this.props.CurrentUser.photoURL}} style={styles.avatar} />
-        				    <TextInput
-        				        style={styles.body}
-        				        placeholder="Add your comment"
-        				        onChangeText={text => this.setState({comment: text})}
-        				        value={this.state.comment}
-        				        // placeholderTextColor= "grey"
-        				        underlineColorAndroid="transparent"
-        				    />
-						    <TouchableOpacity style={styles.iconsend} onPress={() => this._AddComment()}>
-						    	  {iconSend}
-						    </TouchableOpacity>
-        				</View>
-					</View>
+                </ScrollView>
+					{this.ShowInputComment(iconSend)}
             </View>
         );
     }
 }
 function mapStateToProps(state, ownProps) {
     console.log(state.LoadUser,'loadt user trong comment');
-    console.log(state.LoadComments,'loadd All LoadComments trong comment');
-    console.log(state.GetAllLikes,'loadd All LIKEEEEEEEE trong comment');
+    // console.log(state.LoadComments,'loadd All LoadComments trong comment');
+    // console.log(state.GetAllLikes,'loadd All LIKEEEEEEEE trong comment');
 
 	return {
         CurrentUser: state.LoadUser,

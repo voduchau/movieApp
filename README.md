@@ -1,14 +1,37 @@
 # PHÁT TRiỂN ỨNG DỤng TRÊN THIẾT BỊ DI ĐỘNG
 ### Thành viên nhóm:
 
-** 1. Võ Đức Hậu - 17520456 **
-** 2. Lê Phạm Huy Cường - 17520000 **
-** 3. Lê Thuận Phương - 17520000 **
+- Võ Đức Hậu - 17520456
+- Lê Phạm Huy Cường - 17520000
+- Lê Thuận Phương - 17520000
 
+# Review Movie App
+App Review Movie
 
-![alt](https://i.imgur.com/XLPbQXg.png)
-![alt](https://i.imgur.com/2QeGVI5.png)
-![alt](https://i.imgur.com/dRNsv35.png)
-![alt](https://i.imgur.com/voh97TH.png)
-![alt](https://i.imgur.com/m99OC8c.png)
-![alt](https://i.imgur.com/8zvLKIL.png)
+### What's included
+| Name             | Description   |
+| :-------------:|--------------|
+| [React Native](http://facebook.github.io/react-native/releases/0.32/) |  Build Native Mobile Apps using JavaScript and React. |
+| [React Native Navigation](https://github.com/wix/react-native-navigation) | App-wide support for 100% native navigation with an easy cross-platform interface. |
+| [Redux](https://nodejs.org/) | Predictable state container for JavaScript apps.  |
+| [Redux Thunk](https://github.com/gaearon/redux-thunk) | Thunk middleware for Redux | 
+| [ESLint](http://eslint.org/) | The pluggable linting utility for JavaScript and JSX |
+
+### Requirements
+- [Node](https://nodejs.org/) >= 5.0.0
+- [npm](https://npmjs.com) >= 3
+
+### Installation
+
+Clone this repo
+
+```sh
+$ git clone https://github.com/voduchau/movieApp.git
+$ cd movieapp
+$ yarn install or npm install
+```
+### How to start
+```sh
+$ react-native run-android
+$ react-native run-ios
+```
