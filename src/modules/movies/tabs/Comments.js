@@ -84,25 +84,79 @@ class Comments extends Component {
 
     checkLike = (like,item) => {
         if(like){
-            return (
-                <TouchableOpacity style={styles.iconLike} onPress={()=>this._UnLike(item,like)}>
-                      <Like name="like" size={18} color="blue" />
-                </TouchableOpacity>
-            )
+            if(this.props.CurrentUser.userID){
+                return (
+                    <TouchableOpacity style={styles.iconLike} onPress={()=>this._UnLike(item,like)}>
+                          <Like name="like" size={18} color="blue" />
+                    </TouchableOpacity>
+                )  
+            }
+            else {
+                return (
+                    <TouchableOpacity style={styles.iconLike} onPress={()=>{
+                        Alert.alert(
+                            'You are not logged in',
+                            `Please Login before comment`,
+                            [
+                              { text: 'OK', onPress: () => console.log('click ok')}
+                            ],
+                            { cancelable: false }
+                          );
+                    }}>
+                          <Like name="like" size={18} color="blue" />
+                    </TouchableOpacity>
+                )
+            }
         }
         else if(like == null){
-            return (
-                <TouchableOpacity style={styles.iconLike} onPress={()=>this._AddCountLike(this.props.info.id,item.commentID)}>
-                    <Like name="like" size={18} color="white" />
-                </TouchableOpacity>
-            )
+            if(this.props.CurrentUser.userID){
+                return (
+                    <TouchableOpacity style={styles.iconLike} onPress={()=>this._AddCountLike(this.props.info.id,item.commentID)}>
+                        <Like name="like" size={18} color="white" />
+                    </TouchableOpacity>
+                )  
+            }
+            else {
+                return (
+                    <TouchableOpacity style={styles.iconLike} onPress={()=>{
+                        Alert.alert(
+                            'You are not logged in',
+                            `Please Login before comment`,
+                            [
+                              { text: 'OK', onPress: () => console.log('click ok')}
+                            ],
+                            { cancelable: false }
+                          );
+                    }}>
+                        <Like name="like" size={18} color="white" />
+                    </TouchableOpacity>
+                )
+            }
         }
         else {
-            return (
-                <TouchableOpacity style={styles.iconLike} onPress={()=>this._AddCountLike(this.props.info.id,item.commentID)}>
-                      <Like name="like" size={18} color="white" />
-                </TouchableOpacity>
-            )
+            if(this.props.CurrentUser.userID){
+                return (
+                    <TouchableOpacity style={styles.iconLike} onPress={()=>this._AddCountLike(this.props.info.id,item.commentID)}>
+                          <Like name="like" size={18} color="white" />
+                    </TouchableOpacity>
+                )
+            }
+            else {
+                return (
+                    <TouchableOpacity style={styles.iconLike} onPress={()=>{
+                        Alert.alert(
+                            'You are not logged in',
+                            `Please Login before comment`,
+                            [
+                              { text: 'OK', onPress: () => console.log('click ok')}
+                            ],
+                            { cancelable: false }
+                          );
+                    }}>
+                          <Like name="like" size={18} color="white" />
+                    </TouchableOpacity>
+                )
+            }
         }
     }
 
