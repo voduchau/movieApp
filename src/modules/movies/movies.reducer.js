@@ -39,6 +39,12 @@ export default function (state = initialState.movies, action) {
 				...state,
 				searchResults: action.searchResults
 			};
+		case 'GET_RECOMMEND':
+			console.log(action.payload,'?2 thì')
+			return {
+				...state,
+				recomment: action.payload
+			}
 		default:
 			return state;
 	}

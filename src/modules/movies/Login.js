@@ -39,7 +39,6 @@ class Login extends Component {
         ],
         { cancelable: false }
       );
-      
      }
      else {
        firebase.database().ref('users/' + data.user.uid).update({

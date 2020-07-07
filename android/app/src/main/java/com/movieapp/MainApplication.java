@@ -5,8 +5,9 @@ import android.util.Log;
 import android.support.annotation.NonNull;
 
 import com.facebook.react.ReactApplication;
+import com.inprogress.reactnativeyoutube.ReactNativeYouTube;
+import com.brentvatne.react.ReactVideoPackage;
 import com.oblador.vectoricons.VectorIconsPackage;
-import com.BV.LinearGradient.LinearGradientPackage;
 import com.imagepicker.ImagePickerPackage;
 import com.lugg.ReactNativeConfig.ReactNativeConfigPackage;
 import com.oblador.vectoricons.VectorIconsPackage;
@@ -37,6 +38,14 @@ public class MainApplication extends NavigationApplication {
   //   protected List<ReactPackage> getPackages() {
   //     return Arrays.<ReactPackage>asList(
   //         new MainReactPackage(),
+            // new ReactNativeYouTube(),
+            // new ReactVideoPackage(),
+            // new VectorIconsPackage(),
+            // new NavigationReactPackage(),
+            // new LinearGradientPackage(),
+            // new ImagePickerPackage(),
+            // new RNFetchBlobPackage(),
+            // new ReactNativeConfigPackage(),
             // new NavigationReactPackage(),
   //         new ImagePickerPackage()
   //     );
@@ -55,7 +64,9 @@ public class MainApplication extends NavigationApplication {
     new RNFetchBlobPackage(),
 		new LinearGradientPackage(),
 		new ReactNativeConfigPackage(),
-    new ImagePickerPackage()
+    new ImagePickerPackage(),
+    new ReactVideoPackage(),
+    new ReactNativeYouTube()
     );
   }
 

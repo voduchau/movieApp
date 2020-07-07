@@ -14,12 +14,32 @@ export const GetRating = (movieID) => {
 			})
 			const tb = sum/res.length;
 			if(tb){
+                firebase.database().ref('movies/all/results').orderByChild('id').equalTo(movieID).once('value',(data)=>{
+                    for(const key in data.val()){
+                        firebase.database().ref('movies/all/results/' + key).update({vote_average: tb})
+                    }
+                    dispatch({
+                        type: "GET_RATING",
+                        payload: tb
+                    })
+                })
+                firebase.database().ref('movies/now_playing/results').orderByChild('id').equalTo(movieID).once('value',(data)=>{
+                    for(const key in data.val()){
+                        firebase.database().ref('movies/now_playing/results/' + key).update({vote_average: tb})
+                    }
+                })
+                firebase.database().ref('movies/popular/results').orderByChild('id').equalTo(movieID).once('value',(data)=>{
+                    for(const key in data.val()){
+                        firebase.database().ref('movies/popular/results/' + key).update({vote_average: tb})
+                    }
+                })
+
+                // dispatch({
+                //     type: "GET_RATING",
+                //     payload: tb
+                // })
 				// console.log(tb,'rating tra ve');
                 // this.setState({rating: tb})
-                dispatch({
-                    type: "GET_RATING",
-                    payload: tb
-                })
             }
             else {
                 dispatch({

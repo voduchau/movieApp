@@ -8,9 +8,11 @@ import {AddComent} from '../../../action/AddComent';
 import {GetComments} from '../../../action/GetComments';
 import {GetAllLikes} from '../../../action/GetAllLikes';
 import {GetRating} from '../../../action/GetRating';
+import {AddTopRate} from '../../../action/AddTopRate';
 import Send from 'react-native-vector-icons/MaterialCommunityIcons';
 import Like from 'react-native-vector-icons/SimpleLineIcons';
 import firebase from 'firebase';
+import Video from 'react-native-video';
 import { Rating, AirbnbRating } from 'react-native-ratings';
 import firebaseConfig from '../../_global/firebase/firebaseApp';
 import _ from 'lodash';
@@ -31,6 +33,7 @@ class Comments extends Component {
         this.props.GetCurrentUser();
         this.props.GetAllLikes(this.props.CurrentUser.userID);
         this.props.GetComments(this.props.info.id);
+        this.props.GetRating(this.props.info.id)
     }
 
     _AddComment = () => {
@@ -101,22 +104,31 @@ class Comments extends Component {
         }
     }
 
-    ratingCompleted = (rating) => {
+    ratingCompleted = async (rating) => {
         console.log("Rating is: " + rating)
-        firebase.database().ref('rating/' + this.props.info.id + '/' + this.props.CurrentUser.userID).set({
+        await firebase.database().ref('rating/' + this.props.info.id + '/' + this.props.CurrentUser.userID).set({
             rating: rating
         }).then(()=>{
             this.props.GetRating(this.props.info.id)
+            // this.props.AddTopRate(this.props.info,this.props.rating)
         })
     }
     
     render() {
         const iconSend = <Send name="send" size={26} color="#9F9F9F" />;
         const iconLike = <Like name="like" size={18} color="white" />
-    
+        // this.props.AddTopRate(this.props.info,this.props.rating)
         let like;
         return (
             <View>
+                <Video style={{borderColor:'red', borderWidth:2}} source={{uri: "https://youtu.be/vji86f3rBSI"}}
+								ref={(ref) => {
+									this.player = ref
+								  }}                                      // Store reference
+								  onBuffer={this.onBuffer}                // Callback when remote video is buffering
+								  onError={this.videoError}               // Callback when video cannot be loaded
+								  style={styles.backgroundVideo}
+							/>
                 <Text style={{color:'white', fontSize: 18}}>Rate it:</Text>
                 <AirbnbRating
 				  showRating
@@ -179,6 +191,7 @@ function mapStateToProps(state, ownProps) {
         CurrentUser: state.LoadUser,
         AllComments: state.LoadComments,
         AllLikes: state.GetAllLikes,
+	    // Rating: state.GetRating
 	};
 }
 
@@ -188,7 +201,8 @@ function mapDispatchToProps(dispatch) {
         GetCurrentUser: bindActionCreators(GetCurrentUser,dispatch),
         GetComments: bindActionCreators(GetComments,dispatch),
         GetAllLikes: bindActionCreators(GetAllLikes,dispatch),
-        GetRating: bindActionCreators(GetRating,dispatch)
+        GetRating: bindActionCreators(GetRating,dispatch),
+        AddTopRate: bindActionCreators(AddTopRate,dispatch)
 	};
 }
 export default connect(mapStateToProps, mapDispatchToProps)(Comments);

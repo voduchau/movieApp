@@ -46,6 +46,7 @@ class Movies extends Component {
 	_retrieveMovies(isRefreshed) {
 		this.props.actions.retrieveNowPlayingMovies();
 		this.props.actions.retrievePopularMovies();
+		// this.props.actions.retrieveMoviesGenres();
 		if (isRefreshed && this.setState({ isRefreshing: false }));
 	}
 

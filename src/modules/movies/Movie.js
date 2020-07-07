@@ -22,6 +22,7 @@ import {AddComent} from '../../action/AddComent';
 import {GetRating} from '../../action/GetRating';
 import * as moviesActions from './movies.actions';
 import Casts from './tabs/Casts';
+import CardTwo from './components/CardTwo'
 import DefaultTabBar from '../_global/scrollableTabView/DefaultTabBar';
 import Info from './tabs/Info';
 import ProgressBar from '../_global/ProgressBar';
@@ -72,14 +73,15 @@ class Movie extends Component {
 	}
 	componentDidMount = () => {
 		this.props.GetRating(this.props.movieId);
+		this.props.actions.getRecommendMovie(this.props.details.genres);
 	}
 
 	componentWillReceiveProps(nextProps) {
 		if (nextProps.details) this.setState({ isLoading: false });
 	}
 
-	_retrieveDetails(isRefreshed) {
-		this.props.actions.retrieveMovieDetails(this.props.movieId)
+	async _retrieveDetails(isRefreshed) {
+		await this.props.actions.retrieveMovieDetails(this.props.movieId)
 			.then(() => {
 				this._retrieveYoutubeDetails();
 			})
@@ -196,14 +198,50 @@ class Movie extends Component {
 		const iconStar = <Icon name="md-star" size={16} color="#F5B642" />;
 		const iconStarOutline = <Icon name="md-star-outline" size={16} color="#F5B642" />;
 		const { details } = this.props;
-		const info = details;
+		const info = _.isEmpty(details) ? {
+			adult: false,
+			backdrop_path: "/dW6yBuKwiMeronJZw8kozYLMorB.jpg",
+			belongs_to_collection: null,
+			budget: 200000000,
+			casts: {cast: [{cast_id: 2, character: "Ian Lightfoot (voice)", credit_id: "5c1201f4925141352eb965f8", gender: 2, id: 1136406}], crew: [{credit_id: "5e925556ca4f6700147f4d42", department: "Directing", gender: 2, id: 20561, job: "Director", name: "James Gray", profile_path: "/6oRlizIlhI2exF3OEGvtB6M7KmZ.jpg"}]},
+			genres: [{id: 16, name: "Animation"}],
+			id: 508439,
+			images: {backdrops: [{aspect_ratio: 1.777777777777778,
+				file_path: "/dW6yBuKwiMeronJZw8kozYLMorB.jpg",
+				height: 2160,
+				iso_639_1: null,
+				vote_average: 5.456,
+				vote_count: 5,
+				width: 3840}], posters: [{
+					aspect_ratio: 0.6666666666666666,
+					file_path: "/3VqDLgKLfNYSQYEGC5sjGhcPhn7.jpg",
+					height: 3000,
+					iso_639_1: "en",
+					vote_average: 5.738,
+					vote_count: 18,
+					width: 2000,
+				}]
+			},
+			imdb_id: "tt7146812",
+			original_language: "en",
+			original_title: "Onward",
+			overview: "In a suburban fantasy world, two teenage elf brothers embark on an extraordinary quest to discover if there is still a little magic left out there.",
+			popularity: 51.179,
+			poster_path: "/f4aul3FyD3jv3v4bul1IrkWZvzq.jpg",
+			production_companies: [{id: 11391, logo_path: null, name: "Tribeca Productions", origin_country: "US"},{id: 2, logo_path: "/wdrCwmRnLFJhEoH8GSfymY85KHT.png", name: "Walt Disney Pictures", origin_country: "US"},{id: 38227, logo_path: null, name: "TKBC", origin_country: "GB"}],
+			production_countries: [{iso_3166_1: "US", name: "United States of America"}],
+			release_date: "2020-02-29",
+			revenue: 103181419,
+			runtime: 102,
+			vote_average: 3,
+			vote_count: 2439
+		}: details;
 		const iconSend = <Send name="send" size={26} color="#9F9F9F" />;
 		let height;
 		if (this.state.tab === 0) height = this.state.infoTabHeight;
 		if (this.state.tab === 1) height = this.state.castsTabHeight;
 		if (this.state.tab === 2) height = this.state.trailersTabHeight;
 		if (this.state.tab === 3) height = this.state.commentsTabHeight;
-
 		return (
 			this.state.isLoading ? <View style={styles.progressBar}><ProgressBar /></View> :
 			<ScrollView
@@ -232,24 +270,25 @@ class Movie extends Component {
 						loop
 						index={5}>
 						{
-							info.images.backdrops.map((item, index) => (
+							info.images ? info.images.backdrops.map((item, index) => (
 								<View key={index}>
 									<Image source={{ uri: `${TMDB_IMG_URL}/w780/${(item.file_path)}` }} style={styles.imageBackdrop} />
 									<LinearGradient colors={['rgba(0, 0, 0, 0.2)', 'rgba(0,0,0, 0.2)', 'rgba(0,0,0, 0.7)']} style={styles.linearGradient} />
 								</View>
-							))
+							)) : null
 						}
 					</Swiper>
 					<View style={styles.cardContainer}>
 						<Image source={{ uri: `${TMDB_IMG_URL}/w185/${info.poster_path}` }} style={styles.cardImage} />
 						<View style={styles.cardDetails}>
-							<Text style={styles.cardTitle}>{info.original_title}</Text>
-							<Text style={styles.cardTagline}>{info.tagline}</Text>
+							<Text style={styles.cardTitle}>{info ? info.original_title : null}</Text>
+							<Text style={styles.cardTagline}>{info? info.tagline: null}</Text>
 							<View style={styles.cardGenre}>
 								{
-									info.genres.map(item => (
+									info && info.genres ? info.genres.map(item => {
+										// console.log(item,'item x123');
 										<Text key={item.id} style={styles.cardGenreItem}>{item.name}</Text>
-									))
+									}):null
 								}
 							</View>
 							<View style={styles.cardNumbers}>
@@ -274,10 +313,29 @@ class Movie extends Component {
 							<Info tabLabel="INFO" info={info} />
 							<Casts tabLabel="CASTS" info={info} getTabHeight={this._getTabHeight} />
 							<Trailers tabLabel="TRAILERS" youtubeVideos={this.state.youtubeVideos} openYoutube={this._openYoutube} getTabHeight={this._getTabHeight} />
-							<Comments tabLabel="COMMENTS" info={info}/>
+							<Comments tabLabel="COMMENTS" rating={this.props.Rating} info={info}/>
 						</ScrollableTabView>
 					</View>
-					
+					{/* begin recomend */}
+					<View>
+						<View style={styles.listHeading}>
+							<Text style={styles.listHeadingLeft}>Recomend for you</Text>
+							<TouchableOpacity>
+								<Text
+									style={styles.listHeadingRight}
+									// onPress={this._viewMoviesList.bind(this, 'popular', 'Popular')}
+								>
+									{/* See all */}
+								</Text>
+							</TouchableOpacity>
+						</View>
+						<ScrollView horizontal showsHorizontalScrollIndicator={false}>
+							{ !_.isEmpty(this.props.recomment) && this.props.recomment.map(info => (
+								<CardTwo key={info.id} info={info} viewMovie={this._viewMovie} />
+							))}
+						</ScrollView>
+					</View>
+					{/* end recommend */}
 				</View>
 			</ScrollView>
 		);
@@ -301,12 +359,13 @@ Movie.propTypes = {
 };
 
 function mapStateToProps(state, ownProps) {
-	console.log(state.movies.details,'movie details ');
+	console.log(state.movies.recomment,'?????')
 	return {
 		details: state.movies.details,
 		similarMovies: state.movies.similarMovies,
 		CurrentUser: state.LoadUser,
-		Rating: state.GetRating
+		Rating: state.GetRating,
+		recomment: state.movies.recomment
 	};
 }
 

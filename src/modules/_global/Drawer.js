@@ -71,21 +71,29 @@ class Drawer extends Component {
 	componentDidMount = () => {
 		 firebase.auth().onAuthStateChanged((user) => {
 				if (user) {
-					console.log(user,'user da login')
-				  // User is signed in.
-				firebase.database().ref('users/' + user.uid).once('value').then( (snapshot) => {
-					console.log(snapshot.val(),'lay userrrrrrrrrrr')
-					this.setState({ 
-						currentUser: snapshot.val(),
-						avatarSource: snapshot.val().avatar,
-						isLogin:true,
-						userID: user.uid
-					})
-				  }).catch(error => {
-					  console.log(error);
-				  })
+					if(user.emailVerified){
+						console.log(user,'user da login')
+				  	// User is signed in.
+					firebase.database().ref('users/' + user.uid).once('value').then( (snapshot) => {
+						console.log(snapshot.val(),'lay userrrrrrrrrrr')
+						this.setState({ 
+							currentUser: snapshot.val(),
+							avatarSource: snapshot.val().avatar,
+							isLogin:true,
+							userID: user.uid
+						})
+					  }).catch(error => {
+						  console.log(error);
+					  })
+					}
+					else {
+						this.setState({isLogin: false})
+						firebase.auth().signOut();
+						console.log('user chua verified')
+					}
 				} else {
 				  // No user is signed in.
+				  this.setState({isLogin: false})
 				  console.log('chua login')
 				}
 			  })

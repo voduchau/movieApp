@@ -1,10 +1,12 @@
 import React from 'react'; // eslint-disable-line
 import { Provider } from 'react-redux';
 import { Navigation } from 'react-native-navigation';
-
+// import { YellowBox } from 'react-native';
 import { registerScreens } from './screens';
 import configureStore from './store/configureStore';
 
+// YellowBox.ignoreWarnings(['Warning: ...']);
+console.disableYellowBox = true;
 const store = configureStore();
 
 registerScreens(store, Provider);

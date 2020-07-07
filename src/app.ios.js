@@ -4,12 +4,13 @@ import { View } from 'react-native';
 import { Navigation } from 'react-native-navigation';
 import { Provider } from 'react-redux';
 import { registerScreens } from './screens';
-
+// import { YellowBox } from 'react-native';
 import { iconsMap, iconsLoaded } from './utils/AppIcons';
 import configureStore from './store/configureStore';
 
 const store = configureStore();
-
+// YellowBox.ignoreWarnings(['Warning: ...']);
+console.ignoredYellowBox = ['Warning: ReactNative.createElement'];
 registerScreens(store, Provider);
 
 const navigatorStyle = {

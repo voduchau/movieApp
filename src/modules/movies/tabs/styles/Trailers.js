@@ -11,13 +11,26 @@ const styles = StyleSheet.create({
 		flexDirection: 'row',
 		alignItems: 'center'
 	},
+	ContainerVideo: {
+		flex: 1,
+		backgroundColor: 'black',
+		borderColor: 'red',
+		height: 150,
+		borderWidth: 1,
+		flexDirection: 'column'
+	},
+	backgroundVideo: {
+		width: '100%',
+    	height: 120,
+    	backgroundColor: 'black',
+	},
 	thumbnail: {
 		width: 135,
 		height: 90,
 		borderRadius: 3
 	},
 	title: {
-		flex: 1,
+		// flex: 1,
 		color: 'white',
 		fontWeight: '500',
 		fontSize: 13,
