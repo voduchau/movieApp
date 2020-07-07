@@ -40,7 +40,6 @@ export default function (state = initialState.movies, action) {
 				searchResults: action.searchResults
 			};
 		case 'GET_RECOMMEND':
-			console.log(action.payload,'?2 thì')
 			return {
 				...state,
 				recomment: action.payload
