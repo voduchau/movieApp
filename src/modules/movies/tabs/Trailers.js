@@ -7,7 +7,7 @@ import {
 } from 'react-native';
 import _ from 'lodash';
 import YouTube from 'react-native-youtube';
-// import Video from 'react-native-video';
+import Video from 'react-native-video';
 import styles from './styles/Trailers';
 
 const Trailers = ({ getTabHeight, youtubeVideos, openYoutube }) => {
@@ -34,7 +34,7 @@ const Trailers = ({ getTabHeight, youtubeVideos, openYoutube }) => {
 				trailers.map((item, index) => (
 					<TouchableOpacity key={index} onPress={openYoutube.bind(this, `http://youtube.com/watch?v=${item.id}`)} >
 						<View style={styles.thumbnailContainer}>
-							{/* <Video source={{uri: `https://www.youtube.com/watch?v=${item.id}`}}
+							<Video source={{uri: `https://www.youtube.com/watch?v=${item.id}`}}
 								ref={(ref) => {
 									this.player = ref
 								  }}                                      // Store reference
@@ -42,8 +42,8 @@ const Trailers = ({ getTabHeight, youtubeVideos, openYoutube }) => {
 								  onError={this.videoError}               // Callback when video cannot be loaded
 								  controls={true}
 								  style={styles.thumbnail}
-							/> */}
-							<Image source={{ uri: `${item.snippet.thumbnails.medium.url}` }} style={styles.thumbnail} />
+							/>
+							{/* <Image source={{ uri: `${item.snippet.thumbnails.medium.url}` }} style={styles.thumbnail} /> */}
 							{/* <YouTube
 								apiKey='AIzaSyDIJI0BySl3lPRv6JA4LHSWF7YPfPQURUc'
 							  	videoId="KVZ-P-ZI6W4" // The YouTube video ID
