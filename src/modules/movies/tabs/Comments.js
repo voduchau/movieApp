@@ -96,7 +96,7 @@ class Comments extends Component {
                     <TouchableOpacity style={styles.iconLike} onPress={()=>{
                         Alert.alert(
                             'You are not logged in',
-                            `Please Login before comment`,
+                            `Please Login before Like this comment`,
                             [
                               { text: 'OK', onPress: () => console.log('click ok')}
                             ],
@@ -121,7 +121,7 @@ class Comments extends Component {
                     <TouchableOpacity style={styles.iconLike} onPress={()=>{
                         Alert.alert(
                             'You are not logged in',
-                            `Please Login before comment`,
+                            `Please Login before Like this comment`,
                             [
                               { text: 'OK', onPress: () => console.log('click ok')}
                             ],
@@ -146,7 +146,7 @@ class Comments extends Component {
                     <TouchableOpacity style={styles.iconLike} onPress={()=>{
                         Alert.alert(
                             'You are not logged in',
-                            `Please Login before comment`,
+                            `Please Login before Like this comment`,
                             [
                               { text: 'OK', onPress: () => console.log('click ok')}
                             ],
@@ -162,12 +162,24 @@ class Comments extends Component {
 
     ratingCompleted = async (rating) => {
         console.log("Rating is: " + rating)
-        await firebase.database().ref('rating/' + this.props.info.id + '/' + this.props.CurrentUser.userID).set({
-            rating: rating
-        }).then(()=>{
-            this.props.GetRating(this.props.info.id)
-            // this.props.AddTopRate(this.props.info,this.props.rating)
-        })
+        if(this.props.CurrentUser.userID){
+            await firebase.database().ref('rating/' + this.props.info.id + '/' + this.props.CurrentUser.userID).set({
+                rating: rating
+            }).then(()=>{
+                this.props.GetRating(this.props.info.id)
+                // this.props.AddTopRate(this.props.info,this.props.rating)
+            })
+        }
+        else {
+            Alert.alert(
+                'You are not logged in',
+                `Please Login before Rating`,
+                [
+                  { text: 'OK', onPress: () => console.log('click ok')}
+                ],
+                { cancelable: false }
+              );
+        }
     }
 
     ShowInputComment = (iconSend) => {
@@ -224,7 +236,44 @@ class Comments extends Component {
             )
         }
     }
-    
+    showRating = () => {
+        if(this.props.CurrentUser.userID){
+            return (
+                <AirbnbRating
+				  showRating
+                  imageSize={20}
+                  defaultRating={0}
+				  reviews={["Rated: 1/5","Rated: 2/5","Rated: 3/5","Rated: 4/5","Rated: 5/5"]}
+				  size={15}
+				  reviewSize={20}
+				  onFinishRating={this.ratingCompleted}
+				/>
+            )
+        }
+        else {
+            return (
+                <AirbnbRating
+				//   showRating
+                  imageSize={20}
+                  defaultRating={0}
+                  readonly={true}
+				  reviews={["Rated: 1/5","Rated: 2/5","Rated: 3/5","Rated: 4/5","Rated: 5/5"]}
+				  size={15}
+				  reviewSize={20}
+				  onFinishRating={()=>{
+                    Alert.alert(
+                        'You are not logged in',
+                        `Please Login before Rating`,
+                        [
+                          { text: 'OK', onPress: () => console.log('click ok')}
+                        ],
+                        { cancelable: false }
+                      );
+                  }}
+				/>
+            )
+        }
+    }
     render() {
         const iconSend = <Send name="send" size={26} color="#9F9F9F" />;
         const iconLike = <Like name="like" size={18} color="white" />
@@ -241,15 +290,7 @@ class Comments extends Component {
 								  style={styles.backgroundVideo}
 							/>
                 <Text style={{color:'white', fontSize: 18}}>Rate it:</Text>
-                <AirbnbRating
-				  showRating
-                  imageSize={20}
-                  defaultRating={0}
-				  reviews={["Rated: 1/5","Rated: 2/5","Rated: 3/5","Rated: 4/5","Rated: 5/5"]}
-				  size={15}
-				  reviewSize={20}
-				  onFinishRating={this.ratingCompleted}
-				/>
+                {this.showRating()}
                 <Text style={styles.comment1}>Comments:</Text>
                 <ScrollView
                     style={{paddingTop: 10, paddingBottom: 10}}
