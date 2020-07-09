@@ -81,8 +81,8 @@ class Movie extends Component {
 		if (nextProps.details) this.setState({ isLoading: false });
 	}
 
-	async _retrieveDetails(isRefreshed) {
-		await this.props.actions.retrieveMovieDetails(this.props.movieId)
+	_retrieveDetails(isRefreshed) {
+		this.props.actions.retrieveMovieDetails(this.props.movieId)
 			.then(() => {
 				this._retrieveYoutubeDetails();
 			})
@@ -127,6 +127,7 @@ class Movie extends Component {
 	}
 
 	_getTabHeight(tabName, height) {
+		if (tabName === 'info') this.setState({ infoTabHeight: height });
 		if (tabName === 'casts') this.setState({ castsTabHeight: height });
 		if (tabName === 'trailers') this.setState({ trailersTabHeight: height });
 		if (tabName === 'comments') this.setState({ commentsTabHeight: height });
@@ -243,6 +244,7 @@ class Movie extends Component {
 		if (this.state.tab === 1) height = this.state.castsTabHeight;
 		if (this.state.tab === 2) height = this.state.trailersTabHeight;
 		if (this.state.tab === 3) height = this.state.commentsTabHeight;
+		console.log(height,'height x');
 		const rcm = _.isEmpty(this.props.recomment) ? rcmdemo : this.props.recomment.slice(0,4);
 		const genres2 = _.isEmpty(details) ? ['thief']: details.genres.slice(0,3)
 		return (
@@ -313,10 +315,10 @@ class Movie extends Component {
 									style={styles.tabBar}
 								/>
 							)}>
-							<Info tabLabel="INFO" info={info} />
+							<Info tabLabel="INFO" info={info} getTabHeight={this._getTabHeight}/>
 							<Casts tabLabel="CASTS" info={info} getTabHeight={this._getTabHeight} />
-							<Trailers tabLabel="TRAILERS" youtubeVideos={this.state.youtubeVideos} openYoutube={this._openYoutube} getTabHeight={this._getTabHeight} />
-							<Comments tabLabel="COMMENTS" rating={this.props.Rating} info={info}/>
+							<Trailers tabLabel="TRAILERS" info={info} youtubeVideos={this.state.youtubeVideos} openYoutube={this._openYoutube} getTabHeight={this._getTabHeight} />
+							<Comments tabLabel="COMMENTS" rating={this.props.Rating} info={info} getTabHeight={this._getTabHeight}/>
 						</ScrollableTabView>
 					</View>
 					{/* begin recomend */}

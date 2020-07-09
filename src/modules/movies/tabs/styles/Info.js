@@ -4,7 +4,7 @@ const styles = StyleSheet.create({
 	container: {
 		paddingTop: 20,
 		paddingHorizontal: 16,
-		paddingBottom: 25
+		paddingBottom: 30
 	},
 	overview: {
 		marginBottom: 15

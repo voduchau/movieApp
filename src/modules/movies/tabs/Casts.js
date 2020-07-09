@@ -2,20 +2,27 @@ import React, { PropTypes } from 'react';
 import {
 	Text,
 	View,
-	Image
+	Image,
+	ScrollView
 } from 'react-native';
 
 import styles from './styles/Casts';
 import { TMDB_IMG_URL } from '../../../constants/api';
 
 const Casts = ({ info, getTabHeight }) => {
-	let computedHeight = (80 + 15) * info.casts.cast.length; // (castImage.height + castContainer.marginBottom)
-	computedHeight += 447 + 40; // Header height + container ((20 paddingVertical) = 40)
-
+	let data = info.casts.cast;
+	console.log(data);
+	let dataLength = data.length > 10 ? 10 : data.length;
+	let computedHeight = (80 + 15) * dataLength; // (castImage.height + castContainer.marginBottom)
+	// computedHeight += 447 + 40; // Header height + container ((20 paddingVertical) = 40)
+	console.log(computedHeight,'height cast')
 	return (
-		<View style={styles.container} onLayout={getTabHeight.bind(this, 'casts', computedHeight)}>
+		<View style={styles.container} onLayout={getTabHeight.bind(this, 'casts', 950)}>
+			<ScrollView
+                    style={{paddingTop: 10, paddingBottom: 10}}
+                >
 			{
-				info.casts.cast.map(item => (
+				data.slice(0,10).map(item => (
 					<View key={item.cast_id} style={styles.castContainer}>
 						<Image source={{ uri: `${TMDB_IMG_URL}/w185/${item.profile_path}` }} style={styles.castImage} />
 						<View style={styles.characterContainer}>
@@ -29,6 +36,7 @@ const Casts = ({ info, getTabHeight }) => {
 					</View>
 				))
 			}
+			</ScrollView>
 		</View>
 	);
 };

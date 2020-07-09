@@ -278,23 +278,16 @@ class Comments extends Component {
         const iconSend = <Send name="send" size={26} color="#9F9F9F" />;
         const iconLike = <Like name="like" size={18} color="white" />
         // this.props.AddTopRate(this.props.info,this.props.rating)
+        let computedHeight = (100 * this.props.AllComments.length) + 447 + 40;
         let like;
         return (
-            <View style={styles.container}>
-                <Video style={{borderColor:'red', borderWidth:2}} source={{uri: "https://youtu.be/vji86f3rBSI"}}
-								ref={(ref) => {
-									this.player = ref
-								  }}                                      // Store reference
-								  onBuffer={this.onBuffer}                // Callback when remote video is buffering
-								  onError={this.videoError}               // Callback when video cannot be loaded
-								  style={styles.backgroundVideo}
-							/>
+            <View style={styles.container} onLayout={this.props.getTabHeight.bind(this, 'comments', 1000)}>
+                <ScrollView
+                    style={{paddingTop: 8, paddingBottom: 8}}
+                >
                 <Text style={{color:'white', fontSize: 18}}>Rate it:</Text>
                 {this.showRating()}
                 <Text style={styles.comment1}>Comments:</Text>
-                <ScrollView
-                    style={{paddingTop: 10, paddingBottom: 10}}
-                >
                     <FlatList
                         data={this.props.AllComments}
                         keyExtractor={(item,index) => index}
@@ -317,8 +310,8 @@ class Comments extends Component {
                         )
                         }}
                     />
-                </ScrollView>
 					{this.ShowInputComment(iconSend)}
+                </ScrollView>
             </View>
         );
     }
