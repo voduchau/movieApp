@@ -6,6 +6,7 @@ import LoadComments from './LoadComments';
 import GetAllLikes from './GetAllLikes';
 import GetRating from './GetRating';
 import AddTopRate from './AddTopRate';
+import GetWatchList from './GetWatchList';
 const rootReducer = combineReducers({
 	movies,
 	LoadUser,
@@ -13,7 +14,8 @@ const rootReducer = combineReducers({
 	LoadComments,
 	GetAllLikes,
 	GetRating,
-	AddTopRate
+	AddTopRate,
+	GetWatchList
 });
 
 export default rootReducer;
