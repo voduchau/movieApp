@@ -301,6 +301,23 @@ class Drawer extends Component {
 			  );
 		}
 	}
+	_renderWatchlist = (iconList) => {
+		if(this.state.isLogin){
+			return (
+				<TouchableOpacity onPress={()=>this._yourWatchList()}>
+							<View style={styles.drawerListItem}>
+								{iconList}
+								<Text 
+									style={styles.drawerListItemText}
+									onPress={this._viewMoviesList.bind(this, 'watchlist', 'watchlist')}
+								>
+									Your Watchlist
+								</Text>
+							</View>
+				</TouchableOpacity>
+			)
+		}
+	}
 
 	render() {
 		const iconSearch = (<Icon name="md-search" size={26} color="#9F9F9F" style={[styles.drawerListIcon, { paddingLeft: 2 }]} />);
@@ -332,17 +349,7 @@ class Drawer extends Component {
 								</Text>
 							</View>
 						</TouchableOpacity>
-						<TouchableOpacity onPress={()=>this._yourWatchList()}>
-							<View style={styles.drawerListItem}>
-								{iconList}
-								<Text 
-									style={styles.drawerListItemText}
-									onPress={this._viewMoviesList.bind(this, 'watchlist', 'watchlist')}
-								>
-									Your Watchlist
-								</Text>
-							</View>
-						</TouchableOpacity>
+						{this._renderWatchlist(iconList)}
 						<View style={styles.drawerListItem}>
 							{iconTV}
 							<Text style={styles.drawerListItemText} onPress={() => ToastAndroid.show('Coming Soon!', ToastAndroid.SHORT)}>
