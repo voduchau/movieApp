@@ -1,5 +1,5 @@
 import React, { Component, PropTypes } from 'react';
-import {View, Text, TextInput, TouchableOpacity, FlatList, Alert, Image, ScrollView} from 'react-native';
+import {View, Text, TextInput, TouchableOpacity, FlatList, Alert, Image, ScrollView, RefreshControl} from 'react-native';
 import styles from './styles/Comments';
 import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
@@ -28,8 +28,10 @@ class Comments extends Component {
 		this.state = {
             comment: '',
             likeStatus: false,
-            isLogin: false
+            isLogin: false,
+            isRefreshing: false,
         };
+        // this._onScroll = this._onScroll.bind(this);
     }
     componentDidMount = () => {
         this.props.GetCurrentUser();
@@ -244,8 +246,8 @@ class Comments extends Component {
                   imageSize={20}
                   defaultRating={0}
 				  reviews={["Rated: 1/5","Rated: 2/5","Rated: 3/5","Rated: 4/5","Rated: 5/5"]}
-				  size={15}
-				  reviewSize={20}
+				  size={13}
+				  reviewSize={16}
 				  onFinishRating={this.ratingCompleted}
 				/>
             )
@@ -274,6 +276,21 @@ class Comments extends Component {
             )
         }
     }
+    _toggleNavbar(status) {
+		this.props.navigator.toggleNavBar({
+			to: status,
+			animated: true
+		});
+	}
+    _onScroll = (event) => {
+        console.log('vao alo')
+		const contentOffsetY = event.nativeEvent.contentOffset.y.toFixed();
+		if (contentOffsetY > 150) {
+			this._toggleNavbar('hidden');
+		} else {
+			this._toggleNavbar('shown');
+		}
+	}
     render() {
         const iconSend = <Send name="send" size={26} color="#9F9F9F" />;
         const iconLike = <Like name="like" size={18} color="white" />
@@ -281,13 +298,26 @@ class Comments extends Component {
         let computedHeight = (100 * this.props.AllComments.length) + 447 + 40;
         let like;
         return (
-            <View style={styles.container} onLayout={this.props.getTabHeight.bind(this, 'comments', 1000)}>
-                <ScrollView
-                    style={{paddingTop: 8, paddingBottom: 8}}
-                >
-                <Text style={{color:'white', fontSize: 18}}>Rate it:</Text>
+            <View style={styles.container} onLayout={this.props.getTabHeight.bind(this, 'comments', 1100)}>
+                <Text style={{color:'white', fontSize: 15}}>Rate it:</Text>
                 {this.showRating()}
                 <Text style={styles.comment1}>Comments:</Text>
+                {/* <ScrollView
+					style={{}}
+					onScroll={()=>this._onScroll()}
+					scrollEventThrottle={100}
+					// onContentSizeChange={this._onContentSizeChange}
+					refreshControl={
+						<RefreshControl
+							refreshing={this.state.isRefreshing}
+							onRefresh={this._onRefresh}
+							colors={['#EA0000']}
+							tintColor="white"
+							title="loading..."
+							titleColor="white"
+							progressBackgroundColor="white"
+						/>
+					}> */}
                     <FlatList
                         data={this.props.AllComments}
                         keyExtractor={(item,index) => index}
@@ -302,7 +332,7 @@ class Comments extends Component {
                                 {
                                     like = this.props.AllLikes.find(item1 => {
                                         return item1.commentID == item.commentID
-                                    }) ,
+                                    }),
                                     this.checkLike(like,item)
                                 }
                                 <Text style={{color: 'white', fontSize: 12, marginBottom: 10, marginLeft: 8}}>{item.likeCount}</Text>
@@ -311,13 +341,13 @@ class Comments extends Component {
                         }}
                     />
 					{this.ShowInputComment(iconSend)}
-                </ScrollView>
+                {/* </ScrollView> */}
             </View>
         );
     }
 }
 function mapStateToProps(state, ownProps) {
-    console.log(state.LoadUser,'loadt user trong comment');
+    console.log(state.LoadComments,'loadt comment trong comment');
     // console.log(state.LoadComments,'loadd All LoadComments trong comment');
     // console.log(state.GetAllLikes,'loadd All LIKEEEEEEEE trong comment');
 

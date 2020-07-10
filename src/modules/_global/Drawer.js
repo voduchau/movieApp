@@ -70,6 +70,9 @@ class Drawer extends Component {
 			title: 'Search Movie'
 		});
 	}
+	componentWillMount () {
+		this.props.GetWatchList(this.props.CurrentUser.userID)
+	}
 	componentDidMount = () => {
 		 firebase.auth().onAuthStateChanged((user) => {
 				if (user) {
@@ -261,6 +264,16 @@ class Drawer extends Component {
 	}
 	_yourWatchList = () => {
 		console.log(this.props.watchlist,'your watch list click')
+		if(this.props.watchlist.length == 0){
+			Alert.alert(
+				'No Movie',
+				`please add to watch list`,
+				[
+				  { text: 'OK', onPress: () => console.log('oke click')}
+				],
+				{ cancelable: false }
+			  );
+		}
 		// firebase.database().ref('watchlist/' + this.props.CurrentUser.userID + '/').once('value', (data)=>{
 		// 	console.log(data.val(),'data watch list')
 		// })
