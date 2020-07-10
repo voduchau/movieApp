@@ -1,14 +1,22 @@
 # PHÁT TRiỂN ỨNG DỤng TRÊN THIẾT BỊ DI ĐỘNG
-### Thành viên nhóm:
-
+### Members:
+```sh
 - Võ Đức Hậu - 17520456
-- Lê Phạm Huy Cường - 17520000
-- Lê Thuận Phương - 17520000
-
+- Lê Phạm Huy Cường - 17520306
+- Lê Thuận Phương - 17520923
+```
 # Review Movie App
 App Review Movie
+#### movie
+![alt](https://i0.wp.com/s1.uphinh.org/2020/07/09/hinh01.png)
 
-### What's included
+### Comment, ratings, add watch list
+![alt](https://i0.wp.com/s1.uphinh.org/2020/07/09/hinh02.png)
+
+### watch list movie, upload avatar, login, logout
+![alt](https://i0.wp.com/s1.uphinh.org/2020/07/09/hinh03.png)
+
+### 
 | Name             | Description   |
 | :-------------:|--------------|
 | [React Native](http://facebook.github.io/react-native/releases/0.32/) |  Build Native Mobile Apps using JavaScript and React. |
@@ -16,22 +24,33 @@ App Review Movie
 | [Redux](https://nodejs.org/) | Predictable state container for JavaScript apps.  |
 | [Redux Thunk](https://github.com/gaearon/redux-thunk) | Thunk middleware for Redux | 
 | [ESLint](http://eslint.org/) | The pluggable linting utility for JavaScript and JSX |
-
+| [React Native Video](https://github.com/react-native-community/react-native-video) | A Video component for react native |
+| [react-native-vector-icons] | Icon |
 ### Requirements
-- [Node](https://nodejs.org/) >= 5.0.0
-- [npm](https://npmjs.com) >= 3
-
+- [Node](https://nodejs.org/)
+- [npm](https://npmjs.com)
+- [firebase](https://console.firebase.google.com/u/0/)
 ### Installation
 
-Clone this repo
+Clone repo
 
 ```sh
 $ git clone https://github.com/voduchau/movieApp.git
 $ cd movieapp
 $ yarn install or npm install
 ```
-### How to start
+### start project
 ```sh
 $ react-native run-android
-$ react-native run-ios
+```
+### config firebase
+  - open src\modules\_global\firebase\firebaseApp.js, edit the following variables:
+  ```sh
+  - apiKey: "AIzaSyBLTRLRUtg9GiNVG2Ena8XS6nXaM8PtpNo",
+  - authDomain: "movie-didong.firebaseapp.com",
+  - databaseURL: "https://movie-didong.firebaseio.com",
+  - projectId: "movie-didong",
+  - storageBucket: "movie-didong.appspot.com",
+  - messagingSenderId: "516426491829",
+  - appId: "1:516426491829:web:c2d3a781839fdcc11cdbfc"
 ```

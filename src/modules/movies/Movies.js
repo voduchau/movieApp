@@ -155,11 +155,11 @@ class Movies extends Component {
 					<View style={styles.listHeading}>
 						<Text style={styles.listHeadingLeft}>Popular</Text>
 						<TouchableOpacity>
-							<Text
+							{/* <Text
 								style={styles.listHeadingRight}
 								onPress={this._viewMoviesList.bind(this, 'popular', 'Popular')}>
 								See all
-							</Text>
+							</Text> */}
 						</TouchableOpacity>
 					</View>
 					<ScrollView horizontal showsHorizontalScrollIndicator={false}>

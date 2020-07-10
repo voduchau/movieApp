@@ -151,7 +151,7 @@ const styles = StyleSheet.create({
 		justifyContent: 'space-between',
 		alignItems: 'center',
 		marginBottom: 15,
-		marginTop: 30
+		marginTop: 20
 	},
 	listHeadingLeft: {
 		color: 'white',

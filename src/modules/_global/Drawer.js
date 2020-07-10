@@ -7,10 +7,12 @@ import {
 	ImageBackground,
 	Image,
 	ActivityIndicator,
-	Platform
+	Platform,
+	Alert
 } from 'react-native';
 // import { Avatar } from 'react-native-elements';
 import Icon from 'react-native-vector-icons/Ionicons';
+import ListIcon from 'react-native-vector-icons/Feather';
 import IconLogin from 'react-native-vector-icons/SimpleLineIcons';
 import LinearGradient from 'react-native-linear-gradient';
 import firebaseConfig from '../_global/firebase/firebaseApp';
@@ -22,7 +24,7 @@ import { connect } from 'react-redux';
 import styles from './styles/Drawer';
 import 'firebase/firestore';
 import firebase from 'firebase';
-
+import {GetWatchList} from '../../action/GetWatchList'
 
 if (!firebase.apps.length) {
 	firebase.initializeApp(firebaseConfig)
@@ -68,6 +70,9 @@ class Drawer extends Component {
 			title: 'Search Movie'
 		});
 	}
+	componentWillMount () {
+		this.props.GetWatchList(this.props.CurrentUser.userID)
+	}
 	componentDidMount = () => {
 		 firebase.auth().onAuthStateChanged((user) => {
 				if (user) {
@@ -97,6 +102,7 @@ class Drawer extends Component {
 				  console.log('chua login')
 				}
 			  })
+		this.props.GetWatchList(this.props.CurrentUser.userID)
 	}
 	uploadAvatar = async (uri, imagename) => {
 		console.warn("Yüklemeye giren:"+uri);
@@ -256,6 +262,76 @@ class Drawer extends Component {
 		this.setState({ isLogin: false})
 		await firebase.auth().signOut();
 	}
+	_yourWatchList = () => {
+		console.log(this.props.watchlist,'your watch list click')
+		if(this.props.watchlist.length == 0){
+			Alert.alert(
+				'No Movie',
+				`please add to watch list`,
+				[
+				  { text: 'OK', onPress: () => console.log('oke click')}
+				],
+				{ cancelable: false }
+			  );
+		}
+		// firebase.database().ref('watchlist/' + this.props.CurrentUser.userID + '/').once('value', (data)=>{
+		// 	console.log(data.val(),'data watch list')
+		// })
+	}
+	_viewMoviesList(type, title) {
+		let rightButtons = [];
+		console.log(this.props.watchlist,'ádss')
+		if(this.props.watchlist.length != 0){
+			if (Platform.OS === 'ios') {
+				rightButtons = [
+					{
+						id: 'close',
+						title: 'Close',
+						icon: iconsMap['ios-close']
+					}
+				];
+			}
+			this.props.navigator.showModal({
+				title,
+				screen: 'movieapp.MoviesList',
+				passProps: {
+					type,
+					info: this.props.watchlist,
+				},
+				navigatorButtons: {
+					rightButtons
+				}
+			});
+		}
+		else {
+			Alert.alert(
+				'No Movie',
+				`please add to watch list`,
+				[
+				  { text: 'OK', onPress: () => console.log('oke click')}
+				],
+				{ cancelable: false }
+			  );
+		}
+	}
+	_renderWatchlist = (iconList) => {
+		if(this.state.isLogin){
+			return (
+				<TouchableOpacity onPress={()=>this._yourWatchList()}>
+							<View style={styles.drawerListItem}>
+								{iconList}
+								<Text 
+									style={styles.drawerListItemText}
+									onPress={this._viewMoviesList.bind(this, 'watchlist', 'watchlist')}
+								>
+									Your Watchlist
+								</Text>
+							</View>
+				</TouchableOpacity>
+			)
+		}
+	}
+
 	render() {
 		const iconSearch = (<Icon name="md-search" size={26} color="#9F9F9F" style={[styles.drawerListIcon, { paddingLeft: 2 }]} />);
 		const iconMovies = (<Icon name="md-film" size={26} color="#9F9F9F" style={[styles.drawerListIcon, { paddingLeft: 3 }]} />);
@@ -263,6 +339,7 @@ class Drawer extends Component {
 		const iconLogin = (<IconLogin name="login" size={26} color="#9F9F9F" style={styles.drawerListIcon} />);
 		const iconLogout = (<IconLogin name="logout" size={26} color="#9F9F9F" style={styles.drawerListIcon} />);
 		const iconUser = (<IconLogin name="user" size={25} color="#9F9F9F" style={styles.drawerListIcon} />);
+		const iconList = (<ListIcon name="list" size={25} color="#9F9F9F" style={styles.drawerListIcon} />);
 
 		return (
 			<LinearGradient colors={['rgba(0, 0, 0, 0.7)', 'rgba(0,0,0, 0.9)', 'rgba(0,0,0, 1)']} style={styles.linearGradient}>
@@ -285,6 +362,7 @@ class Drawer extends Component {
 								</Text>
 							</View>
 						</TouchableOpacity>
+						{this._renderWatchlist(iconList)}
 						<View style={styles.drawerListItem}>
 							{iconTV}
 							<Text style={styles.drawerListItemText} onPress={() => ToastAndroid.show('Coming Soon!', ToastAndroid.SHORT)}>
@@ -347,13 +425,15 @@ Drawer.propTypes = {
 };
 function mapStateToProps(state, ownProps) {
 	return {
-		CurrentUser: state.LoadUser
+		CurrentUser: state.LoadUser,
+		watchlist:state.GetWatchList
 	};
 }
 
 function mapDispatchToProps(dispatch) {
 	return {
 		GetCurrentUser: bindActionCreators(GetCurrentUser,dispatch),
+		GetWatchList: bindActionCreators(GetWatchList,dispatch)
 	};
 }
 export default connect(mapStateToProps, mapDispatchToProps)(Drawer);

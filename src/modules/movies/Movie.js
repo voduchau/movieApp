@@ -8,8 +8,10 @@ import {
 	ToastAndroid,
 	TouchableOpacity,
 	View,
+	Alert
 } from 'react-native';
 import Icon from 'react-native-vector-icons/Ionicons';
+import AddListIcon from 'react-native-vector-icons/Entypo';
 import LinearGradient from 'react-native-linear-gradient';
 import ScrollableTabView from 'react-native-scrollable-tab-view';
 import Swiper from 'react-native-swiper';
@@ -19,6 +21,7 @@ import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
 import {GetCurrentUser} from '../../action/GetUser';
 import {AddComent} from '../../action/AddComent';
+import {GetWatchList} from '../../action/GetWatchList';
 import {GetRating} from '../../action/GetRating';
 import * as moviesActions from './movies.actions';
 import Casts from './tabs/Casts';
@@ -81,8 +84,8 @@ class Movie extends Component {
 		if (nextProps.details) this.setState({ isLoading: false });
 	}
 
-	async _retrieveDetails(isRefreshed) {
-		await this.props.actions.retrieveMovieDetails(this.props.movieId)
+	_retrieveDetails(isRefreshed) {
+		this.props.actions.retrieveMovieDetails(this.props.movieId)
 			.then(() => {
 				this._retrieveYoutubeDetails();
 			})
@@ -127,6 +130,7 @@ class Movie extends Component {
 	}
 
 	_getTabHeight(tabName, height) {
+		if (tabName === 'info') this.setState({ infoTabHeight: height });
 		if (tabName === 'casts') this.setState({ castsTabHeight: height });
 		if (tabName === 'trailers') this.setState({ trailersTabHeight: height });
 		if (tabName === 'comments') this.setState({ commentsTabHeight: height });
@@ -193,11 +197,28 @@ class Movie extends Component {
 				/>
 				</View>
 			)
-
+	}
+	AddListWatch = () => {
+		console.log(this.props.details,'film deatil')
+		firebase.database().ref('watchlist/' + this.props.CurrentUser.userID + '/' + this.props.details.id).set(this.props.details)
+		.then(()=>{
+			this.props.GetWatchList(this.props.CurrentUser.userID)
+			Alert.alert(
+				'Add your watch list successful',
+				`please check your list`,
+				[
+				  { text: 'OK', onPress: () => console.log('oke click')}
+				],
+				{ cancelable: false }
+			  );
+		})
+		.catch(error => console.log(error, 'error when add watch list'))
+		
 	}
 	render() {
 		const iconStar = <Icon name="md-star" size={16} color="#F5B642" />;
 		const iconStarOutline = <Icon name="md-star-outline" size={16} color="#F5B642" />;
+		const ListIcon = <AddListIcon name="add-to-list" size={25} color="white" />;
 		const { details } = this.props;
 		const info = _.isEmpty(details) ? {
 			adult: false,
@@ -243,6 +264,7 @@ class Movie extends Component {
 		if (this.state.tab === 1) height = this.state.castsTabHeight;
 		if (this.state.tab === 2) height = this.state.trailersTabHeight;
 		if (this.state.tab === 3) height = this.state.commentsTabHeight;
+		console.log(height,'height x');
 		const rcm = _.isEmpty(this.props.recomment) ? rcmdemo : this.props.recomment.slice(0,4);
 		const genres2 = _.isEmpty(details) ? ['thief']: details.genres.slice(0,3)
 		return (
@@ -302,6 +324,11 @@ class Movie extends Component {
 								<Text style={styles.cardRunningHours} />
 							</View>
 						</View>
+						<View>
+							<TouchableOpacity style={{}} onPress={()=>this.AddListWatch()}>
+								{ListIcon}
+							</TouchableOpacity>
+						</View>
 					</View>
 					<View style={styles.contentContainer}>
 						<ScrollableTabView
@@ -313,10 +340,10 @@ class Movie extends Component {
 									style={styles.tabBar}
 								/>
 							)}>
-							<Info tabLabel="INFO" info={info} />
+							<Info tabLabel="INFO" info={info} getTabHeight={this._getTabHeight}/>
 							<Casts tabLabel="CASTS" info={info} getTabHeight={this._getTabHeight} />
-							<Trailers tabLabel="TRAILERS" youtubeVideos={this.state.youtubeVideos} openYoutube={this._openYoutube} getTabHeight={this._getTabHeight} />
-							<Comments tabLabel="COMMENTS" rating={this.props.Rating} info={info}/>
+							<Trailers tabLabel="TRAILERS" info={info} youtubeVideos={this.state.youtubeVideos} openYoutube={this._openYoutube} getTabHeight={this._getTabHeight} />
+							<Comments tabLabel="COMMENTS" rating={this.props.Rating} info={info} getTabHeight={this._getTabHeight}/>
 						</ScrollableTabView>
 					</View>
 					{/* begin recomend */}
@@ -379,7 +406,8 @@ function mapDispatchToProps(dispatch) {
 		actions: bindActionCreators(moviesActions, dispatch),
 		GetCurrentUser: bindActionCreators(GetCurrentUser,dispatch),
 		AddComent: bindActionCreators(AddComent,dispatch),
-		GetRating: bindActionCreators(GetRating,dispatch)
+		GetRating: bindActionCreators(GetRating,dispatch),
+		GetWatchList: bindActionCreators(GetWatchList,dispatch),
 	};
 }
 

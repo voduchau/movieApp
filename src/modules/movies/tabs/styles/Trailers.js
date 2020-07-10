@@ -4,11 +4,12 @@ const styles = StyleSheet.create({
 	container: {
 		flex: 1,
 		marginTop: 20,
-		marginHorizontal: 16
+		marginHorizontal: 16,
+		marginBottom: 20
 	},
 	thumbnailContainer: {
 		marginBottom: 10,
-		flexDirection: 'row',
+		flexDirection: 'column',
 		alignItems: 'center'
 	},
 	ContainerVideo: {

@@ -2,6 +2,7 @@ import { StyleSheet } from 'react-native';
 
 const styles = StyleSheet.create({
 	container: {
+		// flex: 1,
 		paddingTop: 20,
 		paddingHorizontal: 16,
 		paddingBottom: 25
@@ -102,9 +103,9 @@ const styles = StyleSheet.create({
 	},
 	comment1: {
 		color: 'white',
-		marginTop: 8,
-		marginBottom: 15,
-		fontSize: 20
+		// marginTop: 8,
+		marginBottom: 6,
+		fontSize: 16
 	},
 	comment2: {
 		color: 'white',

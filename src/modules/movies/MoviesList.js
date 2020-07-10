@@ -11,6 +11,8 @@ import { connect } from 'react-redux';
 
 import { TMDB_URL, TMDB_API_KEY } from '../../constants/api';
 import * as moviesActions from './movies.actions';
+import {GetWatchList} from '../../action/GetWatchList';
+import {GetCurrentUser} from '../../action/GetUser';
 import CardThree from './components/CardThree';
 import ProgressBar from '../_global/ProgressBar';
 import styles from './styles/MoviesList';
@@ -41,6 +43,20 @@ class MoviesList extends Component {
 	_retrieveMoviesList(isRefreshed) {
 		//upcoming
 		// top_rated
+		console.log(this.props.info,'info truyền qua')
+		if(this.props.type == 'watchlist'){
+			this.props.GetWatchList(this.props.CurrentUser.userID)
+			.then(()=>{
+				const ds = new ListView.DataSource({ rowHasChanged: (row1, row2) => row1 !== row2 });
+				const dataSource = ds.cloneWithRows(this.props.watchlist);
+				this.setState({
+					list: this.props.watchlist,
+					dataSource,
+					isLoading: false
+				});
+			})
+		}
+		else {
 			this.props.actions.retrieveMoviesList(this.props.type, this.state.currentPage)
 			.then(() => {
 				const ds = new ListView.DataSource({ rowHasChanged: (row1, row2) => row1 !== row2 });
@@ -51,6 +67,7 @@ class MoviesList extends Component {
 					isLoading: false
 				});
 			});
+		}
 		if (isRefreshed && this.setState({ isRefreshing: false }));
 	}
 
@@ -172,16 +189,20 @@ MoviesList.navigatorStyle = {
 };
 
 function mapStateToProps(state, ownProps) {
-	console.log(state.movies.list,'listtt')
+	console.log(state.GetWatchList,'listtt')
 	return {
+		CurrentUser: state.LoadUser,
 		list: state.movies.list,
-		upcoming: state.movies.upcoming
+		upcoming: state.movies.upcoming,
+		watchlist: state.GetWatchList
 	};
 }
 
 function mapDispatchToProps(dispatch) {
 	return {
-		actions: bindActionCreators(moviesActions, dispatch)
+		actions: bindActionCreators(moviesActions, dispatch),
+		GetWatchList: bindActionCreators(GetWatchList,dispatch),
+		GetCurrentUser: bindActionCreators(GetCurrentUser,dispatch),
 	};
 }
 
