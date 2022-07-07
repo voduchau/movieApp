@@ -19,7 +19,7 @@
     "eslint-watch": "2.1.14",
     "firebase": "7.1.0",
     "lodash": "^4.16.6",
-    "moment": "^2.16.0",
+    "moment": "^2.29.4",
     "numeral": "^1.5.3",
     "react": "16.0.0-alpha.6",
     "react-native": "^0.44.3",
