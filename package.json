@@ -22,7 +22,7 @@
     "moment": "^2.16.0",
     "numeral": "^1.5.3",
     "react": "16.0.0-alpha.6",
-    "react-native": "^0.44.3",
+    "react-native": "^0.70.4",
     "react-native-button": "^3.0.1",
     "react-native-config": "^0.3.1",
     "react-native-elements": "1.0.0",
